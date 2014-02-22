@@ -1,20 +1,28 @@
 var http = require("http");
-var url = require("url");
 
-function start()
+function start(route, requestHandlers)
 {
-function onRequest(request, response) {
+
+function onRequest(request, response) 
+{
+  handler = route(request, requestHandlers);
+  handler(request, response);
   
-  var pathname = url.parse(request.url).pathname;
-  console.log("Request for " + pathname + " received.");
-  response.writeHead(200, {"Content-Type": "text/plain"});
-  response.write("Hello World " + pathname);
   response.end();
 }
-var portNumber = 8080;
-http.createServer(onRequest).listen(portNumber);
 
-console.log("Server has started on PORT: " + portNumber);
+
+function onRequestE(request, response)
+{
+
+}
+
+var onRequestPort = 8080;
+var onRequestEPort = 4434;
+http.createServer(onRequest).listen(onRequestPort);
+http.createServer(onRequestE).listen(onRequestEPort);
+
+console.log("Server listening on ports " + onRequestPort + " and " + onRequestEPort +".");
 }
 
 exports.start = start;
