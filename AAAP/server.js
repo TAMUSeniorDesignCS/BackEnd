@@ -1,4 +1,6 @@
 var http = require("http");
+var mysql = require("mysql");
+var config = require("./config")
 
 function start(route, requestHandlers)
 {
@@ -17,12 +19,33 @@ function onRequestE(request, response)
 
 }
 
-var onRequestPort = 80;
-var onRequestEPort = 4434;
-http.createServer(onRequest).listen(onRequestPort);
-http.createServer(onRequestE).listen(onRequestEPort);
+TestSQLConnection();
+http.createServer(onRequest).listen(config.RequestPort);
+http.createServer(onRequestE).listen(config.RequestEPort);
 
-console.log("Server listening on ports " + onRequestPort + " and " + onRequestEPort +".");
+console.log("Server listening on ports " + config.RequestPort + " and " + config.RequestEPort +".");
+}
+
+function TestSQLConnection()
+{
+	var testConnection = mysql.createConnection(
+	{ 
+		host : config.SQLhost,
+		database : config.SQLdatabase,
+		port : config.SQLport,
+		user : config.SQLuser,
+		password : config.SQLpassword
+	});
+
+	if (!testConnection.connect())
+	{
+		console.log("Server Test Connection Successful!");
+	}
+
+	if (!testConnection.end())
+	{
+		console.log("Server disconnect Successful!");
+	}
 }
 
 exports.start = start;

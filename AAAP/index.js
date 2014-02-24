@@ -1,12 +1,13 @@
 var server = require("./server");
 var router = require("./router");
+var config = require("./config");
 var requestHandlers = require("./requestHandlers")
 
 var handlers = {}
-handlers["/authAAGroup"] = requestHandlers.authAAGroup;
-handlers["/authUser"] = requestHandlers.authUser;
-handlers["/post"] = requestHandlers.post;
-handlers["/get"] = requestHandlers.get;
-handlers["invalidRequest"] = requestHandlers.error;
+handlers[config.authAAGroupHandlerKey] = requestHandlers.authAAGroup;
+handlers[config.authUserHandlerKey] = requestHandlers.authUser;
+handlers[config.postHandlerKey] = requestHandlers.post;
+handlers[config.getHandlerKey] = requestHandlers.get;
+handlers[config.invalidRequestHandlerKey] = requestHandlers.error;
 
 server.start(router.route, handlers);

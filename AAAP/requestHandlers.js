@@ -1,6 +1,10 @@
+var mysql = require('mysql');
+
+
 function authAAGroup(request, response)
 {
 	console.log("AuthAAGroup handler called")
+	
 }
 
 function authUser(request, response)

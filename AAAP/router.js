@@ -1,4 +1,5 @@
 var url = require("url");
+var config = require("./config");
 
 function route(request, requestHandlers)
 {
@@ -11,7 +12,7 @@ function route(request, requestHandlers)
 	}
 	else
 	{
-		return requestHandlers["invalidRequest"];
+		return requestHandlers[config.invalidRequestHandlerKey];
 	}
 }
 
