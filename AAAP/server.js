@@ -17,7 +17,7 @@ function onRequestE(request, response)
 
 }
 
-var onRequestPort = 8080;
+var onRequestPort = 80;
 var onRequestEPort = 4434;
 http.createServer(onRequest).listen(onRequestPort);
 http.createServer(onRequestE).listen(onRequestEPort);

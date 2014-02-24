@@ -1,6 +1,11 @@
-function authenticate(request, response)
+function authAAGroup(request, response)
 {
-	console.log("Authenticate handler called")
+	console.log("AuthAAGroup handler called")
+}
+
+function authUser(request, response)
+{
+	console.log("AuthUser handler called")
 
 }
 
@@ -23,6 +28,7 @@ function error(request, response)
 }
 
 exports.error = error;
-exports.authenticate = authenticate;
+exports.authAAGroup = authAAGroup;
+exports.authUser = authUser;
 exports.post = post;
 exports.get = get;

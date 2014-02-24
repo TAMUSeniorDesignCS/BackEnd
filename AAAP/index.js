@@ -3,7 +3,8 @@ var router = require("./router");
 var requestHandlers = require("./requestHandlers")
 
 var handlers = {}
-handlers["/authenticate"] = requestHandlers.authenticate;
+handlers["/authAAGroup"] = requestHandlers.authAAGroup;
+handlers["/authUser"] = requestHandlers.authUser;
 handlers["/post"] = requestHandlers.post;
 handlers["/get"] = requestHandlers.get;
 handlers["invalidRequest"] = requestHandlers.error;
