@@ -1,5 +1,5 @@
 var RequestPort = 80;
-var RequestEPort = 4434;
+var RequestEPort = 443;
 
 var SQLhost = 'localhost';
 var SQLdatabase = 'aaapdata';
@@ -9,8 +9,8 @@ var SQLpassword = 'asdfghjkl';
 
 var authAAGroupHandlerKey = "/authAAGroup";
 var authUserHandlerKey = "/authUser";
-var postHandlerKey = "/post";
-var getHandlerKey = "/get";
+var postGetHandlerKey = "/posts/";
+var postHandlerKey = "/posts/new";
 var invalidRequestHandlerKey = "invalidRequest";
 
 exports.RequestPort = RequestPort;

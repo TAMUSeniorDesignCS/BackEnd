@@ -1,6 +1,8 @@
 var http = require("http");
 var mysql = require("mysql");
 var config = require("./config")
+var trycatch = require("trycatch");
+var SQLConnectionSuccessful = true;
 
 function start(route, requestHandlers)
 {
@@ -16,14 +18,26 @@ function onRequest(request, response)
 
 function onRequestE(request, response)
 {
-
+	handler = route(request, requestHandlers);
+  	handler(request, response);
+  
+  	response.end();
 }
 
-TestSQLConnection();
-http.createServer(onRequest).listen(config.RequestPort);
-http.createServer(onRequestE).listen(config.RequestEPort);
+trycatch(TestSQLConnection,SQLError);
+if (SQLConnectionSuccessful)
+{
+	http.createServer(onRequest).listen(config.RequestPort);
+	http.createServer(onRequestE).listen(config.RequestEPort);
+}
 
 console.log("Server listening on ports " + config.RequestPort + " and " + config.RequestEPort +".");
+}
+
+function SQLError()
+{
+	console.log("There was a problem during the SQL connection test!");
+	SQLConnectionSuccessful = false;
 }
 
 function TestSQLConnection()
@@ -37,15 +51,8 @@ function TestSQLConnection()
 		password : config.SQLpassword
 	});
 
-	if (!testConnection.connect())
-	{
-		console.log("Server Test Connection Successful!");
-	}
-
-	if (!testConnection.end())
-	{
-		console.log("Server disconnect Successful!");
-	}
+	testConnection.connect();
+	testConnection.end();
 }
 
 exports.start = start;
