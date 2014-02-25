@@ -1,13 +1,32 @@
 var server = require("./server");
 var router = require("./router");
 var config = require("./config");
-var requestHandlers = require("./requestHandlers")
+var postHandlers = require("./postHandlers");
+var memberHandlers = require("./memberHandlers");
+var aaGroupHandlers = require("./aaGroupHandlers");
+var commentHandlers = require("./commentHandlers");
+var utilityHandlers = require("./utilityHandlers");
 
-var handlers = {}
-handlers[config.authAAGroupHandlerKey] = requestHandlers.authAAGroup;
-handlers[config.authUserHandlerKey] = requestHandlers.authUser;
-handlers[config.postHandlerKey] = requestHandlers.post;
-handlers[config.getHandlerKey] = requestHandlers.get;
-handlers[config.invalidRequestHandlerKey] = requestHandlers.error;
+var handlerList = {}
+handlerList[config.postRefresh] = postHandlers.postRefresh;
+handlerList[config.postRemove] = postHandlers.postRemove;
+handlerList[config.postNew] = postHandlers.postNew;
+handlerList[config.postEdit] = postHandlers.postEdit;
 
-server.start(router.route, handlers);
+handlerList[config.aaGroupAuth] = aaGroupHandlers.aaGroupAuth;
+handlerList[config.aaGroupGetInfo] = aaGroupHandlers.aaGroupGetInfo;
+handlerList[config.aaGroupEdit] = aaGroupHandlers.aaGroupEdit;
+
+handlerList[config.memberNew] = memberHandlers.memberNew;
+handlerList[config.memberGetInfo] = memberHandlers.memberGetInfo;
+handlerList[config.memberRemove] = memberHandlers.memberRemove;
+handlerList[config.memberEdit] = memberHandlers.memberEdit;
+
+handlerList[config.commentNew] = commentHandlers.commentNew;
+handlerList[config.commentRemove] = commentHandlers.commentRemove;
+handlerList[config.commentRefresh] = commentHandlers.commentRefresh;
+handlerList[config.commentEdit] = commentHandlers.commentEdit;
+
+handlerList[config.invalidRequest] = utilityHandlers.invalidRequest;
+
+server.start(router.route, handlerList);

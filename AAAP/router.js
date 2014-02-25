@@ -4,16 +4,15 @@ var config = require("./config");
 function route(request, requestHandlers)
 {
 	var pathname = url.parse(request.url).pathname;
-	console.log("Routing request for :" + pathname);
-
+	console.log("Routing request for : " + pathname);
 	if (typeof requestHandlers[pathname] === 'function')
 	{
 		return requestHandlers[pathname];
 	}
 	else
 	{
-		return requestHandlers[config.invalidRequestHandlerKey];
+		return requestHandlers[config.invalidRequest];
 	}
 }
 
-exports.route = route;
+module.exports.route = route;

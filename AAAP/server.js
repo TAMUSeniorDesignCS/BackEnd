@@ -4,34 +4,41 @@ var config = require("./config")
 var trycatch = require("trycatch");
 var SQLConnectionSuccessful = true;
 
+var SQLConnectionPool = mysql.createPool({
+	host : config.SQLhost,
+	database : config.SQLdatabase,
+	port : config.SQLport,
+	user : config.SQLuser,
+	password : config.SQLpassword
+	});
+
 function start(route, requestHandlers)
 {
 
-function onRequest(request, response) 
-{
-  handler = route(request, requestHandlers);
-  handler(request, response);
-  
-  response.end();
-}
+	function onRequest(request, response) 
+	{
+	  handler = route(request, requestHandlers);
+	  handler(request, response);
+	  
+	  response.end();
+	}
 
+	function onRequestE(request, response)
+	{
+		handler = route(request, requestHandlers);
+	  	handler(request, response);
+	  
+	  	response.end();
+	}
 
-function onRequestE(request, response)
-{
-	handler = route(request, requestHandlers);
-  	handler(request, response);
-  
-  	response.end();
-}
+	trycatch(TestSQLConnection,SQLError);
 
-trycatch(TestSQLConnection,SQLError);
-if (SQLConnectionSuccessful)
-{
-	http.createServer(onRequest).listen(config.RequestPort);
-	http.createServer(onRequestE).listen(config.RequestEPort);
-}
-
-console.log("Server listening on ports " + config.RequestPort + " and " + config.RequestEPort +".");
+	if (SQLConnectionSuccessful)
+	{
+		http.createServer(onRequest).listen(config.RequestPort);
+		http.createServer(onRequestE).listen(config.RequestEPort);
+		console.log("Server listening on ports " + config.RequestPort + " and " + config.RequestEPort +".");
+	}
 }
 
 function SQLError()
@@ -55,4 +62,5 @@ function TestSQLConnection()
 	testConnection.end();
 }
 
-exports.start = start;
+module.exports.start = start;
+module.exports.SQLConnectionPool = SQLConnectionPool;
