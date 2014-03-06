@@ -4,15 +4,24 @@ var server = require('./server.js');
 function postRefresh(request, response)
 {
 	console.log("post/refresh handler called")
-	response.writeHead(200, { "Content-Type": "text/plain; charset=UTF-8"})
-	response.write("You called for a postRefresh request");
+	response.writeHead(200, {  "Content-Type": "application/json"})
 
-	server.SQLConnectionPool.getConnection(function(err, connection)
+	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
+		if (connectionerr == null)
+		{
+			connection.query("SELECT * FROM posts;", function(err, rows)
+			{
+				if(err == null)
+				{
+					response.end(JSON.stringify(rows));
+				}
 
-		connection.release();
+			});
+
+			connection.release();
+		}
 	});
-
 }
 
 function postRemove(request, response)
@@ -31,8 +40,8 @@ function postRemove(request, response)
 function postNew(request, response)
 {
 	console.log("post/new handler called")
-	response.writeHead(200, { "Content-Type": "text/plain; charset=UTF-8"})
-	response.write("You called for a postNew request");
+	response.writeHead(200, { "Content-Type": "application/json"})
+	response.write("asd");
 
 	server.SQLConnectionPool.getConnection(function(err, connection)
 	{
