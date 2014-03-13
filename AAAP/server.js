@@ -17,18 +17,22 @@ function start(route, requestHandlers)
 
 	function onRequest(request, response) 
 	{
-	  handler = route(request, requestHandlers);
-	  handler(request, response);
-	  
-	  response.end();
-	}
+	  console.log("Request from: " + request.connection.remoteAddress);
 
-	function onRequestE(request, response)
-	{
-		handler = route(request, requestHandlers);
-	  	handler(request, response);
-	  
-	  	response.end();
+	  var postData = "";
+	  request.addListener("data", function(chunk)
+	  {
+	  	postData += chunk;
+	  	//console.log("Chunk Recieved: " + chunk);
+	  });
+
+	  request.addListener("end",function()
+	  {
+	  	postData = JSON.parse(postData);
+	  	//console.log(postData);
+	  	handler = route(request, requestHandlers);
+	  	handler(postData, response);
+	  });
 	}
 
 	trycatch(TestSQLConnection,SQLError);
@@ -36,7 +40,7 @@ function start(route, requestHandlers)
 	if (SQLConnectionSuccessful)
 	{
 		http.createServer(onRequest).listen(config.RequestPort);
-		http.createServer(onRequestE).listen(config.RequestEPort);
+		http.createServer(onRequest).listen(config.RequestEPort);
 		console.log("Server listening on ports " + config.RequestPort + " and " + config.RequestEPort +".");
 	}
 }

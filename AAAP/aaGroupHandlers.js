@@ -1,43 +1,76 @@
 var mysql = require('mysql');
 var server = require('./server.js');
 
-function aaGroupAuth(request, response)
+function aaGroupAuth(postData, response)
 {
 	console.log("aagroup/auth handler called")
 	response.writeHead(200, { "Content-Type": "text/plain; charset=UTF-8"})
 	response.write("You called for a aaGroupAuth request");
 
-	server.SQLConnectionPool.getConnection(function(err, connection)
+	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
+		if (connectionerr == null)
+		{
+			connection.query("SELECT * FROM posts;", function(err, rows)
+			{
+				if(err == null)
+				{
+					response.write(JSON.stringify(rows));
+					response.end();
+				}
 
-		connection.release();
+			});
+			connection.release();
+		}
 	});
 
 }
 
-function aaGroupGetInfo(request, response)
+function aaGroupGetInfo(postData, response)
 {
 	console.log("aagroup/getinfo handler called")
 	response.writeHead(200, { "Content-Type": "text/plain; charset=UTF-8"})
 	response.write("You called for a aaGroupGetInfo request");
 
-	server.SQLConnectionPool.getConnection(function(err, connection)
+	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
+		if (connectionerr == null)
+		{
+			connection.query("SELECT * FROM posts;", function(err, rows)
+			{
+				if(err == null)
+				{
+					response.write(JSON.stringify(rows));
+					response.end();
+				}
 
-		connection.release();
+			});
+			connection.release();
+		}
 	});
 }
 
-function aaGroupEdit(request, response)
+function aaGroupEdit(postData, response)
 {
 	console.log("aagroup/edit handler called")
 	response.writeHead(200, { "Content-Type": "text/plain; charset=UTF-8"})
 	response.write("You called for a aaGroupEdit request");
 
-	server.SQLConnectionPool.getConnection(function(err, connection)
+	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
+		if (connectionerr == null)
+		{
+			connection.query("SELECT * FROM posts;", function(err, rows)
+			{
+				if(err == null)
+				{
+					response.write(JSON.stringify(rows));
+					response.end();
+				}
 
-		connection.release();
+			});
+			connection.release();
+		}
 	});
 }
 

@@ -1,10 +1,33 @@
 var mysql = require('mysql');
 var server = require('./server.js');
 
-function postRefresh(request, response)
+function postRefresh(postData, response)
 {
 	console.log("post/refresh handler called")
 	response.writeHead(200, {  "Content-Type": "application/json"})
+	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
+	{
+		if (connectionerr == null)
+		{
+			connection.query("SELECT * FROM posts;", function(err, rows)
+			{
+				if(err == null)
+				{
+					response.write(JSON.stringify(rows));
+					response.end();
+				}
+
+			});
+			connection.release();
+		}
+	});
+}
+
+function postRemove(postData, response)
+{
+	console.log("post/remove handler called")
+	response.writeHead(200, { "Content-Type": "text/plain; charset=UTF-8"})
+	response.write("You called for a postRemove request");
 
 	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
@@ -14,52 +37,61 @@ function postRefresh(request, response)
 			{
 				if(err == null)
 				{
-					response.end(JSON.stringify(rows));
+					response.write(JSON.stringify(rows));
+					response.end();
 				}
 
 			});
-
 			connection.release();
 		}
 	});
 }
 
-function postRemove(request, response)
-{
-	console.log("post/remove handler called")
-	response.writeHead(200, { "Content-Type": "text/plain; charset=UTF-8"})
-	response.write("You called for a postRemove request");
-
-	server.SQLConnectionPool.getConnection(function(err, connection)
-	{
-
-		connection.release();
-	});
-}
-
-function postNew(request, response)
+function postNew(postData, response)
 {
 	console.log("post/new handler called")
 	response.writeHead(200, { "Content-Type": "application/json"})
 	response.write("asd");
 
-	server.SQLConnectionPool.getConnection(function(err, connection)
+	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
+		if (connectionerr == null)
+		{
+			connection.query("SELECT * FROM posts;", function(err, rows)
+			{
+				if(err == null)
+				{
+					response.write(JSON.stringify(rows));
+					response.end();
+				}
 
-		connection.release();
+			});
+			connection.release();
+		}
 	});
 }
 
-function postEdit(request, response)
+function postEdit(postData, response)
 {
 	console.log("post/edit handler called")
 	response.writeHead(200, { "Content-Type": "text/plain; charset=UTF-8"})
 	response.write("You called for a postEdit request");
 
-	server.SQLConnectionPool.getConnection(function(err, connection)
+	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
-		
-		connection.release();
+		if (connectionerr == null)
+		{
+			connection.query("SELECT * FROM posts;", function(err, rows)
+			{
+				if(err == null)
+				{
+					response.write(JSON.stringify(rows));
+					response.end();
+				}
+
+			});
+			connection.release();
+		}
 	});
 }
 
