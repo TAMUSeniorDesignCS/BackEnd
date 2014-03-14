@@ -5,6 +5,7 @@ function postRefresh(postData, response)
 {
 	console.log("post/refresh handler called")
 	response.writeHead(200, {  "Content-Type": "application/json"})
+
 	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
 		if (connectionerr == null)
@@ -26,8 +27,7 @@ function postRefresh(postData, response)
 function postRemove(postData, response)
 {
 	console.log("post/remove handler called")
-	response.writeHead(200, { "Content-Type": "text/plain; charset=UTF-8"})
-	response.write("You called for a postRemove request");
+	response.writeHead(200, { "Content-Type": "application/json"})
 
 	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
@@ -51,7 +51,6 @@ function postNew(postData, response)
 {
 	console.log("post/new handler called")
 	response.writeHead(200, { "Content-Type": "application/json"})
-	response.write("asd");
 
 	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
@@ -74,8 +73,7 @@ function postNew(postData, response)
 function postEdit(postData, response)
 {
 	console.log("post/edit handler called")
-	response.writeHead(200, { "Content-Type": "text/plain; charset=UTF-8"})
-	response.write("You called for a postEdit request");
+	response.writeHead(200, { "Content-Type": "application/json"})
 
 	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{

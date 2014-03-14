@@ -30,6 +30,7 @@ function start(route, requestHandlers)
 	  {
 	  	postData = JSON.parse(postData);
 	  	//console.log(postData);
+	  	postData["connection"] = request.connection.remoteAddress;
 	  	handler = route(request, requestHandlers);
 	  	handler(postData, response);
 	  });

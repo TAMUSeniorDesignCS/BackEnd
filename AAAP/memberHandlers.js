@@ -1,24 +1,42 @@
 var mysql = require('mysql');
 var server = require('./server.js');
+var utility = require('./utilityFunctions.js');
+
+var groupidRow = 'groupid';
+var useridRow = 'userid';
+var firstNameRow = 'firstname';
+var userNameRow = 'username';
+var sponsorRow = 'sponsorid';
+var passwordRow = 'password';
+var lastConnectionRow = 'lastconnection';
+var emailRow = 'email';
 
 function memberNew(postData, response)
 {
 	console.log("member/new handler called")
-	response.writeHead(200, { "Content-Type": "text/plain; charset=UTF-8"})
-	response.write("You called for a memberNew request");
+	response.writeHead(200, {"Content-Type": "text/plain; charset=UTF-8"})
 
 	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
 		if (connectionerr == null)
 		{
-			connection.query("SELECT * FROM posts;", function(err, rows)
+			var queryElements = [postData[groupidRow], postData[firstNameRow], postData[userNameRow],
+						 		 postData[sponsorRow], postData[passwordRow], postData["connection"],
+						 		 postData[emailRow]];
+			var sqlQuery = "INSERT INTO `members` (`groupid`, `firstname`, `username`, `sponsorid`, `password`, `lastconnection`, `email`) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}');";
+			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
+			
+			connection.query(sqlQuery, function(err, rows)
 			{
 				if(err == null)
 				{
-					response.write(JSON.stringify(rows));
-					response.end();
+					response.write("Request Handled successfully.")
 				}
-
+				else
+				{
+					response.write(JSON.stringify(err));
+				}
+				response.end();
 			});
 			connection.release();
 		}
@@ -29,21 +47,27 @@ function memberNew(postData, response)
 function memberGetInfo(postData, response)
 {
 	console.log("member/getInfo handler called")
-	response.writeHead(200, { "Content-Type": "text/plain; charset=UTF-8"})
-	response.write("You called for a memberGetInfo request");
+	response.writeHead(200, { "Content-Type": "application/json"})
 
 	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
 		if (connectionerr == null)
 		{
-			connection.query("SELECT * FROM posts;", function(err, rows)
+			var queryElements = [ postData[useridRow] ];
+			var sqlQuery = "SELECT * FROM `members` WHERE `userid`='{0}';";
+			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
+
+			connection.query(sqlQuery, function(err, rows)
 			{
 				if(err == null)
 				{
 					response.write(JSON.stringify(rows));
-					response.end();
 				}
-
+				else
+				{
+					response.write(JSON.stringify(err));
+				}
+				response.end();
 			});
 			connection.release();
 		}
@@ -53,21 +77,27 @@ function memberGetInfo(postData, response)
 function memberRemove(postData, response)
 {
 	console.log("member/remove handler called")
-	response.writeHead(200, { "Content-Type": "text/plain; charset=UTF-8"})
-	response.write("You called for a memberRemove request");
+	response.writeHead(200, { "Content-Type": "application/json"})
 
 	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
 		if (connectionerr == null)
 		{
-			connection.query("SELECT * FROM posts;", function(err, rows)
+			var queryElements = [ postData[useridRow] ];
+			var sqlQuery = "DELETE FROM `members` WHERE `userid`='{0}';";
+			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
+
+			connection.query(sqlQuery, function(err, rows)
 			{
 				if(err == null)
 				{
-					response.write(JSON.stringify(rows));
-					response.end();
+					response.write("Request Handled successfully.");
 				}
-
+				else
+				{
+					response.write(JSON.stringify(err));
+				}
+				response.end();
 			});
 			connection.release();
 		}
@@ -77,21 +107,30 @@ function memberRemove(postData, response)
 function memberEdit(postData, response)
 {
 	console.log("member/edit handler called")
-	response.writeHead(200, { "Content-Type": "text/plain; charset=UTF-8"})
-	response.write("You called for a memberEdit request");
+	response.writeHead(200, { "Content-Type": "application/json"})
 
 	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
 		if (connectionerr == null)
 		{
-			connection.query("SELECT * FROM posts;", function(err, rows)
+
+			var queryElements = [ postData[useridRow], postData[firstNameRow], postData[userNameRow],
+			 					  postData[sponsorRow], postData[passwordRow], postData["connection"],
+			 					  postData[emailRow]];
+			var sqlQuery = "UPDATE `members` SET `firstname`='{1}', `username`='{2}', `sponsorid`='{3}', `password`='{4}', `lastconnection`='{5}', `email`='{6}' WHERE `userid`='{0}';";
+			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
+
+			connection.query(sqlQuery, function(err, rows)
 			{
 				if(err == null)
 				{
-					response.write(JSON.stringify(rows));
-					response.end();
+					response.write("Request Handled successfully.");
 				}
-
+				else
+				{
+					response.write(JSON.stringify(err));
+				}
+				response.end();
 			});
 			connection.release();
 		}

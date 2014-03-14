@@ -5,7 +5,6 @@ function commentRefresh(postData, response)
 {
 	console.log("comment/refresh handler called")
 	response.writeHead(200, { "Content-Type": "text/plain; charset=UTF-8"})
-	esponse.write("You called for a commentRefresh request");
 
 	server.SQLConnectionPool.getConnection(function(err, connection)
 	{
@@ -18,8 +17,7 @@ function commentRefresh(postData, response)
 function commentNew(postData, response)
 {
 	console.log("comment/new handler called")
-	response.writeHead(200, { "Content-Type": "text/plain; charset=UTF-8"})
-	esponse.write("You called for a commentNew request");
+	response.writeHead(200, { "Content-Type": "application/json"})
 
 	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
@@ -42,8 +40,7 @@ function commentNew(postData, response)
 function commentRemove(postData, response)
 {
 	console.log("comment/remove handler called")
-	response.writeHead(200, { "Content-Type": "text/plain; charset=UTF-8"})
-	esponse.write("You called for a commentRemove request");
+	response.writeHead(200, { "Content-Type": "application/json"})
 
 	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
@@ -66,8 +63,7 @@ function commentRemove(postData, response)
 function commentEdit(postData, response)
 {
 	console.log("comment/edit handler called")
-	response.writeHead(200, { "Content-Type": "text/plain; charset=UTF-8"})
-	esponse.write("You called for a commentEdit request");
+	response.writeHead(200, { "Content-Type": "application/json"})
 
 	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{

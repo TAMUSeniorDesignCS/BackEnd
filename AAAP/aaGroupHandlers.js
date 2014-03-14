@@ -4,8 +4,7 @@ var server = require('./server.js');
 function aaGroupAuth(postData, response)
 {
 	console.log("aagroup/auth handler called")
-	response.writeHead(200, { "Content-Type": "text/plain; charset=UTF-8"})
-	response.write("You called for a aaGroupAuth request");
+	response.writeHead(200, { "Content-Type": "application/json"})
 
 	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
@@ -29,8 +28,7 @@ function aaGroupAuth(postData, response)
 function aaGroupGetInfo(postData, response)
 {
 	console.log("aagroup/getinfo handler called")
-	response.writeHead(200, { "Content-Type": "text/plain; charset=UTF-8"})
-	response.write("You called for a aaGroupGetInfo request");
+	response.writeHead(200, { "Content-Type": "application/json"})
 
 	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
@@ -53,8 +51,7 @@ function aaGroupGetInfo(postData, response)
 function aaGroupEdit(postData, response)
 {
 	console.log("aagroup/edit handler called")
-	response.writeHead(200, { "Content-Type": "text/plain; charset=UTF-8"})
-	response.write("You called for a aaGroupEdit request");
+	response.writeHead(200, { "Content-Type": "application/json"})
 
 	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
