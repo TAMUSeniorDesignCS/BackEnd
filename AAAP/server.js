@@ -2,6 +2,8 @@ var http = require("http");
 var mysql = require("mysql");
 var config = require("./config")
 var trycatch = require("trycatch");
+var utility = require('./utilityFunctions.js');
+
 var SQLConnectionSuccessful = true;
 
 var SQLConnectionPool = mysql.createPool({
@@ -28,7 +30,14 @@ function start(route, requestHandlers)
 
 	  request.addListener("end",function()
 	  {
-	  	postData = JSON.parse(postData);
+	    var header  = request.headers['content-type'];
+
+	    //We only want to parse 
+	  	if ((typeof(header) == typeof("")) && utility.stringContains(header,"json"))
+	  	{ 
+	  		postData = JSON.parse(postData);
+	    }
+
 	  	//console.log(postData);
 	  	postData["connection"] = request.connection.remoteAddress;
 	  	handler = route(request, requestHandlers);

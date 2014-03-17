@@ -1,22 +1,45 @@
 var mysql = require('mysql');
 var server = require('./server.js');
+var utility = require('./utilityFunctions.js');
+
+//Rows for aaGroupHandler Table
+var cityRow = "city";
+var groupidRow = "groupid";
+var groupnameRow = "groupname";
+var infoRow = "info";
 
 function aaGroupAuth(postData, response)
 {
-	console.log("aagroup/auth handler called")
-	response.writeHead(200, { "Content-Type": "application/json"})
+	//console.log("aagroup/auth handler called")
 
 	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
 		if (connectionerr == null)
 		{
-			connection.query("SELECT * FROM posts;", function(err, rows)
+			var queryElements = [ postData[groupidRow] ];
+			var sqlQuery = "SELECT * FROM `aagroups` WHERE `groupid`='{0}' LIMIT 1;";
+			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
+
+			connection.query(sqlQuery, function(err, rows)
 			{
 				if(err == null)
 				{
-					response.write(JSON.stringify(rows));
-					response.end();
+					response.writeHead(200, {"Content-Type": "text/plain; charset=UTF-8"})
+					if (rows.length > 0)
+					{
+						response.write("Request Handled successfully.")
+					}
+					else
+					{
+						response.write("NO")
+					}
 				}
+				else
+				{
+					response.writeHead(200, { "Content-Type": "application/json"})
+					response.write(JSON.stringify(err));
+				}
+				response.end();
 
 			});
 			connection.release();
@@ -27,20 +50,29 @@ function aaGroupAuth(postData, response)
 
 function aaGroupGetInfo(postData, response)
 {
-	console.log("aagroup/getinfo handler called")
-	response.writeHead(200, { "Content-Type": "application/json"})
+	//console.log("aagroup/getinfo handler called")
 
 	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
 		if (connectionerr == null)
 		{
-			connection.query("SELECT * FROM posts;", function(err, rows)
+			var queryElements = [ postData[groupidRow] ];
+			var sqlQuery = "SELECT * FROM `aagroups` WHERE `groupid`='{0}' LIMIT 1;";
+			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
+
+			connection.query(sqlQuery, function(err, rows)
 			{
 				if(err == null)
 				{
-					response.write(JSON.stringify(rows));
-					response.end();
+					response.writeHead(200, {"Content-Type": "application/json"})
+					response.write(JSON.stringify(rows))
 				}
+				else
+				{
+					response.writeHead(200, { "Content-Type": "application/json"})
+					response.write(JSON.stringify(err));
+				}
+				response.end();
 
 			});
 			connection.release();
@@ -50,20 +82,30 @@ function aaGroupGetInfo(postData, response)
 
 function aaGroupEdit(postData, response)
 {
-	console.log("aagroup/edit handler called")
-	response.writeHead(200, { "Content-Type": "application/json"})
+	//console.log("aagroup/edit handler called")
 
 	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
 		if (connectionerr == null)
 		{
-			connection.query("SELECT * FROM posts;", function(err, rows)
+			var queryElements = [ postData[groupidRow], postData[cityRow], postData[groupnameRow],
+								  postData[infoRow] ];
+			var sqlQuery = "UPDATE `aagroups` SET `city`='{1}', `groupname`='{2}', `info`='{3}' WHERE `groupid`='{0}' LIMIT 1;";
+			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
+
+			connection.query(sqlQuery, function(err, rows)
 			{
 				if(err == null)
 				{
-					response.write(JSON.stringify(rows));
-					response.end();
+					response.writeHead(200, {"Content-Type": "text/plain; charset=UTF-8"})
+					response.write("Request Handled successfully.")
 				}
+				else
+				{
+					response.writeHead(200, { "Content-Type": "application/json"})
+					response.write(JSON.stringify(err));
+				}
+				response.end();
 
 			});
 			connection.release();
