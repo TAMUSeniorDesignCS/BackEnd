@@ -17,6 +17,7 @@ handlerList[config.aaGroupAuth] = aaGroupHandlers.aaGroupAuth;
 handlerList[config.aaGroupGetInfo] = aaGroupHandlers.aaGroupGetInfo;
 handlerList[config.aaGroupEdit] = aaGroupHandlers.aaGroupEdit;
 
+handlerList[config.memberAuth] = memberHandlers.memberAuth;
 handlerList[config.memberNew] = memberHandlers.memberNew;
 handlerList[config.memberGetInfo] = memberHandlers.memberGetInfo;
 handlerList[config.memberRemove] = memberHandlers.memberRemove;
@@ -24,7 +25,6 @@ handlerList[config.memberEdit] = memberHandlers.memberEdit;
 
 handlerList[config.commentNew] = commentHandlers.commentNew;
 handlerList[config.commentRemove] = commentHandlers.commentRemove;
-handlerList[config.commentRefresh] = commentHandlers.commentRefresh;
 handlerList[config.commentEdit] = commentHandlers.commentEdit;
 
 handlerList[config.invalidRequest] = utilityHandlers.invalidRequest;

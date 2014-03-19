@@ -16,6 +16,7 @@ var aaGroupAuth = "/aagroup/auth";
 var aaGroupGetInfo = "/aagroup/getinfo";
 var aaGroupEdit = "/aagroup/edit";
 
+var memberAuth = "/member/auth";
 var memberNew = "/member/new";
 var memberGetInfo = "/member/getinfo";
 var memberRemove = "/member/remove";
@@ -23,7 +24,6 @@ var memberEdit = "/member/edit";
 
 var commentNew = "/comment/new";
 var commentRemove = "/comment/remove";
-var commentRefresh = "/comment/refresh";
 var commentEdit = "/comment/edit";
 
 var invalidRequest = "invalidRequest"; 
@@ -40,6 +40,7 @@ module.exports.aaGroupAuth = aaGroupAuth;
 module.exports.aaGroupGetInfo = aaGroupGetInfo;
 module.exports.aaGroupEdit = aaGroupEdit;
 
+module.exports.memberAuth = memberAuth;
 module.exports.memberNew = memberNew;
 module.exports.memberGetInfo = memberGetInfo;
 module.exports.memberRemove = memberRemove;
@@ -47,7 +48,6 @@ module.exports.memberEdit = memberEdit;
 
 module.exports.commentNew = commentNew;
 module.exports.commentRemove = commentRemove;
-module.exports.commentRefresh = commentRefresh;
 module.exports.commentEdit = commentEdit;
 
 module.exports.invalidRequest;

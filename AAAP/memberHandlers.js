@@ -7,10 +7,48 @@ var groupidRow = 'groupid';
 var useridRow = 'userid';
 var firstNameRow = 'firstname';
 var userNameRow = 'username';
-var sponsorRow = 'sponsorid';
+var sponsoridRow = 'sponsorid';
 var passwordRow = 'password';
 var lastConnectionRow = 'lastconnection';
 var emailRow = 'email';
+
+function memberAuth(postData, response)
+{
+	//console.log("member/auth handler called")
+
+	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
+	{
+		if (connectionerr == null)
+		{
+			var queryElements = [ postData[userNameRow], postData[passwordRow] ];
+			var sqlQuery = "SELECT * FROM `members` WHERE `username`='{0}' AND `password`='{1}' LIMIT 1;";
+			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
+
+			connection.query(sqlQuery, function(err, rows)
+			{
+				if(err == null)
+				{
+					response.writeHead(200, {"Content-Type": "text/plain; charset=UTF-8"})
+					if (rows.length > 0)
+					{
+						response.write("Request Handled successfully.")
+					}
+					else
+					{
+						response.write("NO")
+					}
+				}
+				else
+				{
+					response.writeHead(200, { "Content-Type": "application/json"})
+					response.write(JSON.stringify(err));
+				}
+				response.end();
+			});
+			connection.release();
+		}
+	});
+}
 
 function memberNew(postData, response)
 {
@@ -21,7 +59,7 @@ function memberNew(postData, response)
 		if (connectionerr == null)
 		{
 			var queryElements = [postData[groupidRow], postData[firstNameRow], postData[userNameRow],
-						 		 postData[sponsorRow], postData[passwordRow], postData["connection"],
+						 		 postData[sponsoridRow], postData[passwordRow], postData["connection"],
 						 		 postData[emailRow]];
 			var sqlQuery = "INSERT INTO `members` (`groupid`, `firstname`, `username`, `sponsorid`, `password`, `lastconnection`, `email`) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}');";
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
@@ -118,7 +156,7 @@ function memberEdit(postData, response)
 		{
 
 			var queryElements = [ postData[useridRow], postData[firstNameRow], postData[userNameRow],
-			 					  postData[sponsorRow], postData[passwordRow], postData["connection"],
+			 					  postData[sponsoridRow], postData[passwordRow], postData["connection"],
 			 					  postData[emailRow]];
 			var sqlQuery = "UPDATE `members` SET `firstname`='{1}', `username`='{2}', `sponsorid`='{3}', `password`='{4}', `lastconnection`='{5}', `email`='{6}' WHERE `userid`='{0}' LIMIT 1;";
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
@@ -142,6 +180,7 @@ function memberEdit(postData, response)
 	});
 }
 
+module.exports.memberAuth = memberAuth;
 module.exports.memberNew = memberNew;
 module.exports.memberGetInfo = memberGetInfo;
 module.exports.memberRemove = memberRemove;

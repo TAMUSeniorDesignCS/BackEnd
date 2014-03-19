@@ -1,8 +1,10 @@
 var http = require("http");
+var https = require("https");
 var mysql = require("mysql");
 var config = require("./config")
 var trycatch = require("trycatch");
 var utility = require('./utilityFunctions.js');
+var fs = require('fs');
 
 var SQLConnectionSuccessful = true;
 
@@ -13,6 +15,13 @@ var SQLConnectionPool = mysql.createPool({
 	user : config.SQLuser,
 	password : config.SQLpassword
 	});
+
+/*var ServerOptions = {
+	hostname: 'aaap',
+	port: 443,
+	key: fs.readFileSync(),
+	cert: fs.readFileSync()
+};*/
 
 function start(route, requestHandlers)
 {
@@ -50,7 +59,6 @@ function start(route, requestHandlers)
 	if (SQLConnectionSuccessful)
 	{
 		http.createServer(onRequest).listen(config.RequestPort);
-		http.createServer(onRequest).listen(config.RequestEPort);
 		console.log("Server listening on ports " + config.RequestPort + " and " + config.RequestEPort +".");
 	}
 }
