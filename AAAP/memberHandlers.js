@@ -28,13 +28,15 @@ function memberAuth(postData, response)
 			{
 				if(err == null)
 				{
-					response.writeHead(200, {"Content-Type": "text/plain; charset=UTF-8"})
+					
 					if (rows.length > 0)
 					{
-						response.write("Request Handled successfully.")
+						response.writeHead(200, { "Content-Type": "application/json"})
+						response.write(JSON.stringify(rows));
 					}
 					else
 					{
+						response.writeHead(200, {"Content-Type": "text/plain; charset=UTF-8"})
 						response.write("NO")
 					}
 				}

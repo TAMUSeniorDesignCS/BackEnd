@@ -17,7 +17,6 @@ var SQLConnectionPool = mysql.createPool({
 	});
 
 /*var ServerOptions = {
-	hostname: 'aaap',
 	port: 443,
 	key: fs.readFileSync(),
 	cert: fs.readFileSync()
@@ -59,7 +58,7 @@ function start(route, requestHandlers)
 	if (SQLConnectionSuccessful)
 	{
 		http.createServer(onRequest).listen(config.RequestPort);
-		console.log("Server listening on ports " + config.RequestPort + " and " + config.RequestEPort +".");
+		console.log("Server listening on port " + config.RequestPort +".");
 	}
 }
 

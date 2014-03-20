@@ -29,7 +29,6 @@ var commentEdit = "/comment/edit";
 var invalidRequest = "invalidRequest"; 
 
 module.exports.RequestPort = RequestPort;
-module.exports.RequestEPort = RequestEPort;
 
 module.exports.postRefresh = postRefresh;
 module.exports.postRemove = postRemove;
