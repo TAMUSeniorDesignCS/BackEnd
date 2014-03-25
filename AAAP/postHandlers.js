@@ -15,6 +15,27 @@ var timeoutRow = "timeout";
 var useridRow = "userid";
 var blockeduserRow = "blockeduser";
 
+function getComments(connection, row)
+{
+	var queryElements = [ row[postidRow] ];
+	var sqlQuery = "SELECT * FROM `comments` WHERE `postid`='{0}';";
+	sqlQuery = utility.stringFormat(sqlQuery, queryElements);
+	
+	var data;
+	connection.query(sqlQuery, function(err, comments)
+	{
+		if (err == null && comments.length > 0)
+		{
+			data = comments;
+		}
+		else
+		{
+			data = 'empty';
+		}
+		return data;
+	});
+}
+
 function postRefresh(postData, response)
 {
 	//console.log("post/refresh handler called")
@@ -32,6 +53,27 @@ function postRefresh(postData, response)
 				if(err == null)
 				{
 					response.writeHead(200, {"Content-Type": "application/json"});
+					for (var i =0; i < rows.length; i++)
+					{
+						var row = rows[i];
+						var queryElements2 = [ row[postidRow] ];
+						var sqlQuery2 = "SELECT * FROM `comments` WHERE `postid`='{0}';";
+						sqlQuery2 = utility.stringFormat(sqlQuery2, queryElements2);
+	
+						connection.query(sqlQuery, function(err, comments)
+						{
+							if (err == null && comments.length > 0)
+							{
+								row['comments'] = 'ahh';
+							}
+							else
+							{
+								row['comments'] = 'empty';
+							}
+							console.log(row);
+						});
+					}
+					
 					response.write(JSON.stringify(rows));
 				}
 				else

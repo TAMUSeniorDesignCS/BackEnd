@@ -5,7 +5,7 @@ var SQLhost = 'localhost';
 var SQLdatabase = 'aaapdata';
 var SQLport = '3306';
 var SQLuser = 'paul';
-var SQLpassword = 'asdfghjkl';
+var SQLpassword = '1234567890!@#$%^&*()';
 
 var postRefresh = "/post/refresh";
 var postRemove = "/post/remove";
