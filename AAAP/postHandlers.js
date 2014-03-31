@@ -5,7 +5,7 @@ var utility = require('./utilityFunctions.js');
 var groupidRow = "groupid";
 
 //Rows for post table
-var posteridRow = "posterid";
+var usernameRow = "username";
 var messageRow = "message";
 var postidRow = "postid";
 var datepostedRow = "dateposted";
@@ -15,26 +15,8 @@ var timeoutRow = "timeout";
 var useridRow = "userid";
 var blockeduserRow = "blockeduser";
 
-function getComments(connection, row)
-{
-	var queryElements = [ row[postidRow] ];
-	var sqlQuery = "SELECT * FROM `comments` WHERE `postid`='{0}';";
-	sqlQuery = utility.stringFormat(sqlQuery, queryElements);
-	
-	var data;
-	connection.query(sqlQuery, function(err, comments)
-	{
-		if (err == null && comments.length > 0)
-		{
-			data = comments;
-		}
-		else
-		{
-			data = 'empty';
-		}
-		return data;
-	});
-}
+var valid =  {"valid": true} ;
+var invalid =  {"valid" : false} ;
 
 function postRefresh(postData, response)
 {
@@ -45,41 +27,36 @@ function postRefresh(postData, response)
 		if (connectionerr == null)
 		{
 			var queryElements = [ postData[groupidRow] ];
-			var sqlQuery = "SELECT * FROM `posts`";
+			var sqlQuery = "SELECT posts.* FROM `members` JOIN `posts` ON members.groupid = {0} AND members.username = posts.username; SELECT * FROM comments;";
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
 
 			connection.query(sqlQuery, function(err, rows)
 			{
+				response.writeHead(200, {"Content-Type": "application/json"});
 				if(err == null)
 				{
-					response.writeHead(200, {"Content-Type": "application/json"});
-					for (var i =0; i < rows.length; i++)
+					var posts = rows[0];
+					var comments = rows[1];
+					posts.push(valid);
+					for (var i =0; i < posts.length; i++)
 					{
-						var row = rows[i];
-						var queryElements2 = [ row[postidRow] ];
-						var sqlQuery2 = "SELECT * FROM `comments` WHERE `postid`='{0}';";
-						sqlQuery2 = utility.stringFormat(sqlQuery2, queryElements2);
-	
-						connection.query(sqlQuery, function(err, comments)
+						var post = posts[i];
+						post['comments'] = [];
+						for (var j = 0; j < comments.length; j++)
 						{
-							if (err == null && comments.length > 0)
+							var comment = comments[j];
+
+							if (post['postid'] === comment['postid'])
 							{
-								row['comments'] = 'ahh';
+								post['comments'].push(comment);
 							}
-							else
-							{
-								row['comments'] = 'empty';
-							}
-							console.log(row);
-						});
+						}
 					}
-					
-					response.write(JSON.stringify(rows));
+					response.write(JSON.stringify(posts));
 				}
 				else
 				{
-					response.writeHead(200, { "Content-Type": "application/json"})
-					response.write(JSON.stringify(err));
+					response.write(JSON.stringify(invalid));
 				}
 				response.end();
 
@@ -103,15 +80,14 @@ function postRemove(postData, response)
 
 			connection.query(sqlQuery, function(err, rows)
 			{
+				response.writeHead(200, {"Content-Type": "application/json"})
 				if(err == null)
 				{
-					response.writeHead(200, {"Content-Type": "text/plain; charset=UTF-8"})
-					response.write("Request Handled successfully.")
+					response.write(JSON.stringify([valid]))
 				}
 				else
 				{
-					response.writeHead(200, { "Content-Type": "application/json"})
-					response.write(JSON.stringify(err));
+					response.write(JSON.stringify([invalid]));
 				}
 				response.end();
 
@@ -129,23 +105,30 @@ function postNew(postData, response)
 	{
 		if (connectionerr == null)
 		{
-			var queryElements = [ postData[posteridRow], postData[messageRow],
+			var queryElements = [ postData[usernameRow], postData[messageRow],
 								  '0000-00-00 00:00:00', '0000-00-00 00:00:00' ];
-			var sqlQuery = "INSERT INTO `posts` (`posterid`, `message`, `dateposted`, `timeout`) VALUES ('{0}', '{1}', '{2}', '{3}');";
+			var sqlQuery = "INSERT INTO `posts` (`username`, `message`, `dateposted`, `timeout`) VALUES ('{0}', '{1}', '{2}', '{3}');";
 
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
 			
 			connection.query(sqlQuery, function(err, rows)
 			{
+				response.writeHead(200, {"Content-Type": "application/json"})
 				if(err == null)
 				{
-					response.writeHead(200, {"Content-Type": "text/plain; charset=UTF-8"})
-					response.write("Request Handled successfully.")
+					var newObject = [
+					{ "username" : postData[usernameRow] ,
+					 "message" : postData[messageRow],
+					 "postid" : rows.insertId,
+					 "dateposted" : '0000-00-00 00:00:00',
+					 "timeout" : '0000-00-00 00:00:00' }
+					, valid];
+
+					response.write(JSON.stringify(newObject))
 				}
 				else
 				{
-					response.writeHead(200, { "Content-Type": "application/json"})
-					response.write(JSON.stringify(err));
+					response.write(JSON.stringify([invalid]));
 				}
 				response.end();
 
@@ -170,15 +153,21 @@ function postEdit(postData, response)
 
 			connection.query(sqlQuery, function(err, rows)
 			{
+				response.writeHead(200, { "Content-Type": "application/json"})
 				if(err == null)
 				{
-					response.writeHead(200, {"Content-Type": "text/plain; charset=UTF-8"})
-					response.write("Request Handled successfully.")
+					var updatedObject = [
+					{"message" : postData[messageRow],
+					 "postid" : rows.insertId,
+					 "dateposted" : '0000-00-00 00:00:00',
+					 "timeout" : '0000-00-00 00:00:00' }
+					, valid];
+
+					response.write(JSON.stringify(updatedObject))
 				}
 				else
 				{
-					response.writeHead(200, { "Content-Type": "application/json"})
-					response.write(JSON.stringify(err));
+					response.write(JSON.stringify([invalid]));
 				}
 				response.end();
 

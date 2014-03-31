@@ -13,7 +13,8 @@ var SQLConnectionPool = mysql.createPool({
 	database : config.SQLdatabase,
 	port : config.SQLport,
 	user : config.SQLuser,
-	password : config.SQLpassword
+	password : config.SQLpassword,
+	multipleStatements : true
 	});
 
 /*var ServerOptions = {

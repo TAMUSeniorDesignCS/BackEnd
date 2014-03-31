@@ -8,6 +8,9 @@ var groupidRow = "groupid";
 var groupnameRow = "groupname";
 var infoRow = "info";
 
+var valid =  {"valid": true} ;
+var invalid =  {"valid" : false} ;
+
 function aaGroupAuth(postData, response)
 {
 	//console.log("aagroup/auth handler called")
@@ -22,22 +25,14 @@ function aaGroupAuth(postData, response)
 
 			connection.query(sqlQuery, function(err, rows)
 			{
-				if(err == null)
+				response.writeHead(200, { "Content-Type": "application/json"});
+				if(err == null && rows.length > 0)
 				{
-					response.writeHead(200, {"Content-Type": "text/plain; charset=UTF-8"})
-					if (rows.length > 0)
-					{
-						response.write("Request Handled successfully.")
-					}
-					else
-					{
-						response.write("NO")
-					}
+					response.write(JSON.stringify([valid]));
 				}
 				else
 				{
-					response.writeHead(200, { "Content-Type": "application/json"})
-					response.write(JSON.stringify(err));
+					response.write(JSON.stringify([invalid]));
 				}
 				response.end();
 
@@ -62,15 +57,14 @@ function aaGroupGetInfo(postData, response)
 
 			connection.query(sqlQuery, function(err, rows)
 			{
+				response.writeHead(200, {"Content-Type": "application/json"});
 				if(err == null)
 				{
-					response.writeHead(200, {"Content-Type": "application/json"})
-					response.write(JSON.stringify(rows))
+					response.write(JSON.stringify(rows));
 				}
 				else
 				{
-					response.writeHead(200, { "Content-Type": "application/json"})
-					response.write(JSON.stringify(err));
+					response.write(JSON.stringify([invalid]));
 				}
 				response.end();
 
@@ -95,15 +89,14 @@ function aaGroupEdit(postData, response)
 
 			connection.query(sqlQuery, function(err, rows)
 			{
+				response.writeHead(200, { "Content-Type": "application/json"});
 				if(err == null)
 				{
-					response.writeHead(200, {"Content-Type": "text/plain; charset=UTF-8"})
-					response.write("Request Handled successfully.")
+					response.write(JSON.stringify([valid]));
 				}
 				else
 				{
-					response.writeHead(200, { "Content-Type": "application/json"})
-					response.write(JSON.stringify(err));
+					response.write(JSON.stringify([invalid]));
 				}
 				response.end();
 

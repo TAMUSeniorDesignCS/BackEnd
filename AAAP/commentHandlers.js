@@ -5,10 +5,13 @@ var utility = require('./utilityFunctions.js');
 //Rows for comment table
 var postidRow = "postid";
 var commentidRow = "commentid";
-var posteridRow = "posterid";
+var usernameRow = "username";
 var datepostedRow = "dateposted";
 var messageRow = "message";
 var timeoutRow = "timeout";
+
+var valid =  {"valid": true} ;
+var invalid =  {"valid" : false} ;
 
 function commentNew(postData, response)
 {
@@ -18,23 +21,22 @@ function commentNew(postData, response)
 	{
 		if (connectionerr == null)
 		{
-			var queryElements = [ postData[postidRow], postData[posteridRow],
+			var queryElements = [ postData[postidRow], postData[usernameRow],
 								  '0000-00-00 00:00:00', postData[messageRow],
 								  '0000-00-00 00:00:00' ];
-			var sqlQuery = "INSERT INTO `comments` (`postid`, `posterid`, `dateposted`, `message`, `timeout`) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}');";
+			var sqlQuery = "INSERT INTO `comments` (`postid`, `username`, `dateposted`, `message`, `timeout`) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}');";
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
 
 			connection.query(sqlQuery, function(err, rows)
 			{
+				response.writeHead(200, { "Content-Type": "application/json"});
 				if(err == null)
 				{
-					response.writeHead(200, {"Content-Type": "text/plain; charset=UTF-8"})
-					response.write("Request Handled successfully.")
+					response.write(JSON.stringify([valid]));
 				}
 				else
 				{
-					response.writeHead(200, { "Content-Type": "application/json"})
-					response.write(JSON.stringify(err));
+					response.write(JSON.stringify([invalid]));
 				}
 				response.end();
 
@@ -58,15 +60,14 @@ function commentRemove(postData, response)
 
 			connection.query(sqlQuery, function(err, rows)
 			{
+				response.writeHead(200, { "Content-Type": "application/json"});
 				if(err == null)
 				{
-					response.writeHead(200, {"Content-Type": "text/plain; charset=UTF-8"})
-					response.write("Request Handled successfully.")
+					response.write(JSON.stringify([valid]));
 				}
 				else
 				{
-					response.writeHead(200, { "Content-Type": "application/json"})
-					response.write(JSON.stringify(err));
+					response.write(JSON.stringify([invalid]));
 				}
 				response.end();
 
@@ -91,15 +92,15 @@ function commentEdit(postData, response)
 
 			connection.query(sqlQuery, function(err, rows)
 			{
+				response.writeHead(200, { "Content-Type": "application/json"});
 				if(err == null)
 				{
-					response.writeHead(200, {"Content-Type": "text/plain; charset=UTF-8"})
-					response.write("Request Handled successfully.")
+					response.write(JSON.stringify([valid]));
 				}
 				else
 				{
-					response.writeHead(200, { "Content-Type": "application/json"})
-					response.write(JSON.stringify(err));
+					
+					response.write(JSON.stringify([invalid]));
 				}
 				response.end();
 
