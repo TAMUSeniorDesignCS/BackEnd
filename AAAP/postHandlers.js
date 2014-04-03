@@ -1,6 +1,7 @@
 var mysql = require('mysql');
 var server = require('./server.js');
 var utility = require('./utilityFunctions.js');
+var moment = require('moment');
 
 var groupidRow = "groupid";
 
@@ -26,8 +27,8 @@ function postRefresh(postData, response)
 	{
 		if (connectionerr == null)
 		{
-			var queryElements = [ postData[groupidRow] ];
-			var sqlQuery = "SELECT posts.* FROM `members` JOIN `posts` ON members.groupid = {0} AND members.username = posts.username; SELECT * FROM comments;";
+			var queryElements = [ postData[groupidRow], 0 ];
+			var sqlQuery = "SELECT members.firstname,posts.* FROM `members` JOIN `posts` ON members.groupid = {0} AND members.username = posts.username ORDER BY postid DESC LIMIT 25; SELECT * FROM comments;";
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
 
 			connection.query(sqlQuery, function(err, rows)
@@ -74,8 +75,8 @@ function postRemove(postData, response)
 	{
 		if (connectionerr == null)
 		{
-			var queryElements = [ postData[postidRow] ];
-			var sqlQuery = "DELETE FROM `posts` WHERE `postid`='{0}' LIMIT 1;";
+			var queryElements = [ postData[postidRow], postData[postidRow] ];
+			var sqlQuery = "SET SQL_SAFE_UPDATES=0; DELETE FROM `posts` WHERE `postid`='{0}' LIMIT 1; DELETE FROM `comments` WHERE `postid`='{1}';";
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
 
 			connection.query(sqlQuery, function(err, rows)
@@ -105,9 +106,10 @@ function postNew(postData, response)
 	{
 		if (connectionerr == null)
 		{
+			var time = moment().format(utility.dateFormat); 
 			var queryElements = [ postData[usernameRow], postData[messageRow],
-								  '0000-00-00 00:00:00', '0000-00-00 00:00:00' ];
-			var sqlQuery = "INSERT INTO `posts` (`username`, `message`, `dateposted`, `timeout`) VALUES ('{0}', '{1}', '{2}', '{3}');";
+								  time, '0000-00-00 00:00:00' ];
+			var sqlQuery = "INSERT INTO `posts` (`username`, `message`, `dateposted`, `timeout`) VALUES ('{0}', '{1}', '{2}' ,'{3}');";
 
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
 			
@@ -116,13 +118,13 @@ function postNew(postData, response)
 				response.writeHead(200, {"Content-Type": "application/json"})
 				if(err == null)
 				{
-					var newObject = [
-					{ "username" : postData[usernameRow] ,
-					 "message" : postData[messageRow],
-					 "postid" : rows.insertId,
-					 "dateposted" : '0000-00-00 00:00:00',
-					 "timeout" : '0000-00-00 00:00:00' }
-					, valid];
+					var newObject = [ {
+					 usernameRow : postData[usernameRow] ,
+					 messageRow : postData[messageRow],
+					 postidRow : rows.insertId,
+					 datepostedRow : time,
+					 timeoutRow : '0000-00-00 00:00:00' },
+					 valid];
 
 					response.write(JSON.stringify(newObject))
 				}
@@ -146,8 +148,9 @@ function postEdit(postData, response)
 	{
 		if (connectionerr == null)
 		{
+			var time = moment().format(utility.dateFormat); 
 			var queryElements = [ postData[postidRow], postData[messageRow],
-								  '0000-00-00 00:00:00', '0000-00-00 00:00:00' ];
+								  time, '0000-00-00 00:00:00' ];
 			var sqlQuery = "UPDATE `posts` SET `message`='{1}', `dateposted`='{2}', `timeout`='{3}' WHERE `postid`='{0}';";
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
 
@@ -156,12 +159,12 @@ function postEdit(postData, response)
 				response.writeHead(200, { "Content-Type": "application/json"})
 				if(err == null)
 				{
-					var updatedObject = [
-					{"message" : postData[messageRow],
-					 "postid" : rows.insertId,
-					 "dateposted" : '0000-00-00 00:00:00',
-					 "timeout" : '0000-00-00 00:00:00' }
-					, valid];
+					var updatedObject = [ {
+					 messageRow : postData[messageRow],
+					 postidRow : rows.insertId,
+					 datepostedRow : time,
+					 timeoutRow : '0000-00-00 00:00:00' },
+					 valid];
 
 					response.write(JSON.stringify(updatedObject))
 				}

@@ -1,3 +1,5 @@
+var dateFormat = "YYYY-MM-DD HH:mm:ss";
+
 function stringFormat(string, array)
 {
 	var i = 0;
@@ -38,3 +40,4 @@ function stringContains(start, string)
 
 module.exports.stringFormat = stringFormat;
 module.exports.stringContains = stringContains;
+module.exports.dateFormat = dateFormat;

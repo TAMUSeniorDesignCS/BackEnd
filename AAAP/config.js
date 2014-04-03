@@ -26,6 +26,15 @@ var commentNew = "/comment/new";
 var commentRemove = "/comment/remove";
 var commentEdit = "/comment/edit";
 
+var directMessageNew = "/directmessage/new";
+var directMessageRemove = "/directmessage/remove";
+var directMessageRefresh = "/directmessage/refresh";
+var directMessageEdit = "/directmessage/edit";
+
+var userBlockNew = "/userblock/new";
+var userBlockRemove = "/userblock/remove";
+var userBlockGetInfo = "/userblock/getinfo";
+
 var invalidRequest = "invalidRequest"; 
 
 module.exports.RequestPort = RequestPort;
@@ -48,6 +57,15 @@ module.exports.memberEdit = memberEdit;
 module.exports.commentNew = commentNew;
 module.exports.commentRemove = commentRemove;
 module.exports.commentEdit = commentEdit;
+
+module.exports.directMessageNew = directMessageNew;
+module.exports.directMessageRemove = directMessageRemove;
+module.exports.directMessageRefresh = directMessageRefresh;
+module.exports.directMessageEdit = directMessageEdit;
+
+module.exports.userBlockNew = userBlockNew;
+module.exports.userBlockRemove = userBlockRemove;
+module.exports.userBlockGetInfo = userBlockGetInfo;
 
 module.exports.invalidRequest;
 

@@ -14,7 +14,8 @@ var SQLConnectionPool = mysql.createPool({
 	port : config.SQLport,
 	user : config.SQLuser,
 	password : config.SQLpassword,
-	multipleStatements : true
+	multipleStatements : true,
+	time_zone : "SYSTEM"
 	});
 
 /*var ServerOptions = {

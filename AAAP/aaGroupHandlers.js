@@ -28,7 +28,8 @@ function aaGroupAuth(postData, response)
 				response.writeHead(200, { "Content-Type": "application/json"});
 				if(err == null && rows.length > 0)
 				{
-					response.write(JSON.stringify([valid]));
+					rows.push(valid);
+					response.write(JSON.stringify(rows));
 				}
 				else
 				{
@@ -60,6 +61,7 @@ function aaGroupGetInfo(postData, response)
 				response.writeHead(200, {"Content-Type": "application/json"});
 				if(err == null)
 				{
+					rows.push(valid);
 					response.write(JSON.stringify(rows));
 				}
 				else
@@ -92,7 +94,14 @@ function aaGroupEdit(postData, response)
 				response.writeHead(200, { "Content-Type": "application/json"});
 				if(err == null)
 				{
-					response.write(JSON.stringify([valid]));
+					var updatedObject = [ {
+					 groupidRow: postData[groupidRow],
+					 cityRow : postData[cityRow],
+					 groupnameRow : postData[groupnameRow],
+					 infoRow : postData[infoRow] },
+					 valid];
+
+					response.write(JSON.stringify(updateObject));
 				}
 				else
 				{

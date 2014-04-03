@@ -21,8 +21,9 @@ function commentNew(postData, response)
 	{
 		if (connectionerr == null)
 		{
+			var time = moment().format(utility.dateFormat); 
 			var queryElements = [ postData[postidRow], postData[usernameRow],
-								  '0000-00-00 00:00:00', postData[messageRow],
+								  time, postData[messageRow],
 								  '0000-00-00 00:00:00' ];
 			var sqlQuery = "INSERT INTO `comments` (`postid`, `username`, `dateposted`, `message`, `timeout`) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}');";
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
@@ -32,7 +33,16 @@ function commentNew(postData, response)
 				response.writeHead(200, { "Content-Type": "application/json"});
 				if(err == null)
 				{
-					response.write(JSON.stringify([valid]));
+					var newObject = [ {
+					 usernameRow : postData[usernameRow] ,
+					 messageRow : postData[messageRow],
+					 postidRow  : postData[postidRow],
+					 commentidRow : rows.insertId,
+					 datepostedRow : time,
+					 timeoutRow : '0000-00-00 00:00:00' },
+					 valid];
+
+					response.write(JSON.stringify(newObject));
 				}
 				else
 				{
@@ -85,8 +95,9 @@ function commentEdit(postData, response)
 	{
 		if (connectionerr == null)
 		{
+			var time = moment().format(utility.dateFormat); 
 			var queryElements = [ postData[commentidRow], postData[messageRow],
-								  '0000-00-00 00:00:00', postData[timeoutRow] ];
+								  time, "0000-00-00 00:00:00" ];
 			var sqlQuery = "UPDATE `comments` SET `message`='{1}', `dateposted`='{2}', `timeout` = '{3}' WHERE `commentid`='{0}';";
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
 
@@ -95,7 +106,15 @@ function commentEdit(postData, response)
 				response.writeHead(200, { "Content-Type": "application/json"});
 				if(err == null)
 				{
-					response.write(JSON.stringify([valid]));
+					var updatedObject = [ {
+					 messageRow : postData[messageRow],
+					 postidRow  : postData[postidRow],
+					 commentidRow : postData[commentidRow],
+					 datepostedRow : time,
+					 timeoutRow : '0000-00-00 00:00:00' },
+					 valid];
+
+					response.write(JSON.stringify(updatedObject));
 				}
 				else
 				{

@@ -30,7 +30,8 @@ function memberAuth(postData, response)
 				response.writeHead(200, { "Content-Type": "application/json"});
 				if(err == null && rows.length > 0)
 				{
-					response.write(JSON.stringify([valid]));
+					rows.push(valid);
+					response.write(JSON.stringify(rows));
 				}
 				else
 				{
@@ -62,16 +63,16 @@ function memberNew(postData, response)
 				response.writeHead(200, {"Content-Type": "application/json"});
 				if(err == null)
 				{
-					newMember = [
-					{ "groupid" : postData[groupidRow],
-					 "firstname" : postData[firstNameRow],
-					 "username" : postData[userNameRow],
-					 "sponsorid" : postData[sponsoridRow],
-					 "password" : postData[passwordRow],
-					 "email" : postData[emailRow] }
-					, valid];
+					var newObject = [ {
+					  groupidRow : postData[groupidRow],
+					  firstNameRow : postData[firstNameRow],
+					  userNameRow : postData[userNameRow],
+					  sponsoridRow : postData[sponsoridRow],
+					  passwordRow : postData[passwordRow],
+					  emailRow : postData[emailRow] },
+					  valid];
 
-					response.write(JSON.stringify(newMember));
+					response.write(JSON.stringify(newObject));
 				}
 				else
 				{
@@ -166,7 +167,14 @@ function memberEdit(postData, response)
 				response.writeHead(200, { "Content-Type": "application/json"})
 				if(err == null)
 				{
-					response.write(JSON.stringify([valid]));
+					updatedObject = [
+					{firstNameRow : postData[firstNameRow],
+					 userNameRow : postData[userNameRow],
+					 sponsoridRow : postData[sponsoridRow],
+					 passwordRow : postData[passwordRow],
+					 emailRow : postData[emailRow] }
+					, valid];
+					response.write(JSON.stringify(updatedObject));
 				}
 				else
 				{
