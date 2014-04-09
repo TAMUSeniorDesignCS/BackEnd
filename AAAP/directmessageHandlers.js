@@ -33,12 +33,12 @@ function directMessageNew(postData, response)
 				if(err == null)
 				{
 					var newObject = [ {
-					 usernameRow : postData[usernameRow] ,
-					 receiverUserNameRow : postData[receiverUserNameRow],
-					 messageRow : postData[messageRow],
-					 directMessageIdRow : rows.insertId,
-					 datePostedRow : time,
-					 timeoutRow : '0000-00-00 00:00:00' },
+					 'username' : postData[usernameRow] ,
+					 'receiverusername' : postData[receiverUserNameRow],
+					 'message' : postData[messageRow],
+					 'directmessageid' : rows.insertId,
+					 'dateposted' : time,
+					 'timeout' : '0000-00-00 00:00:00' },
 					 valid];
 
 					response.write(JSON.stringify(newObject));
@@ -143,10 +143,10 @@ function directMessageEdit(postData, response)
 				if(err == null)
 				{
 					var editedObject = [ {
-					 messageRow : postData[messageRow],
-					 directMessageIdRow : postData[directMessageidRow],
-					 datePostedRow : time,
-					 timeoutRow : '0000-00-00 00:00:00' },
+					 'message' : postData[messageRow],
+					 'directMessageid' : postData[directMessageidRow],
+					 'dateposted' : time,
+					 'timeout' : '0000-00-00 00:00:00' },
 					 valid];
 
 					response.write(JSON.stringify(editedObject));

@@ -95,10 +95,10 @@ function aaGroupEdit(postData, response)
 				if(err == null)
 				{
 					var updatedObject = [ {
-					 groupidRow: postData[groupidRow],
-					 cityRow : postData[cityRow],
-					 groupnameRow : postData[groupnameRow],
-					 infoRow : postData[infoRow] },
+					 'groupid': postData[groupidRow],
+					 'city' : postData[cityRow],
+					 'groupname' : postData[groupnameRow],
+					 'info' : postData[infoRow] },
 					 valid];
 
 					response.write(JSON.stringify(updateObject));

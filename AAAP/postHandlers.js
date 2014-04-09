@@ -120,11 +120,11 @@ function postNew(postData, response)
 				if(err == null)
 				{
 					var newObject = [ {
-					 usernameRow : postData[usernameRow] ,
-					 messageRow : postData[messageRow],
-					 postidRow : rows.insertId,
-					 datepostedRow : time,
-					 timeoutRow : '0000-00-00 00:00:00' },
+					 'username' : postData[usernameRow] ,
+					 'message' : postData[messageRow],
+					 'postid' : rows.insertId,
+					 'dateposted' : time,
+					 'timeout' : '0000-00-00 00:00:00' },
 					 valid];
 
 					response.write(JSON.stringify(newObject))
@@ -161,10 +161,10 @@ function postEdit(postData, response)
 				if(err == null)
 				{
 					var updatedObject = [ {
-					 messageRow : postData[messageRow],
-					 postidRow : rows.insertId,
-					 datepostedRow : time,
-					 timeoutRow : '0000-00-00 00:00:00' },
+					 'message' : postData[messageRow],
+					 'postid' : rows.insertId,
+					 'dateposted' : time,
+					 'timeout' : '0000-00-00 00:00:00' },
 					 valid];
 
 					response.write(JSON.stringify(updatedObject))

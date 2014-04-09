@@ -65,12 +65,13 @@ function memberNew(postData, response)
 				if(err == null)
 				{
 					var newObject = [ {
-					  groupidRow : postData[groupidRow],
-					  firstNameRow : postData[firstNameRow],
-					  userNameRow : postData[userNameRow],
-					  sponsoridRow : postData[sponsoridRow],
-					  passwordRow : postData[passwordRow],
-					  emailRow : postData[emailRow] },
+					  'groupid' : postData[groupidRow],
+					  'firstName' : postData[firstNameRow],
+					  'username' : postData[userNameRow],
+					  'sponsorid' : postData[sponsoridRow],
+					  'password' : postData[passwordRow],
+					  'email' : postData[emailRow],
+					  'phonenumber' : postData[phonenumberRow] },
 					  valid];
 
 					response.write(JSON.stringify(newObject));
@@ -169,11 +170,12 @@ function memberEdit(postData, response)
 				if(err == null)
 				{
 					updatedObject = [
-					{firstNameRow : postData[firstNameRow],
-					 userNameRow : postData[userNameRow],
-					 sponsoridRow : postData[sponsoridRow],
-					 passwordRow : postData[passwordRow],
-					 emailRow : postData[emailRow] }
+					{'firstname' : postData[firstNameRow],
+					 'username' : postData[userNameRow],
+					 'sponsorid' : postData[sponsoridRow],
+					 'password' :  postData[passwordRow],
+					 'email' : postData[emailRow],
+					 'phonenumber' : postData[phonenumberRow] }
 					, valid];
 					response.write(JSON.stringify(updatedObject));
 				}

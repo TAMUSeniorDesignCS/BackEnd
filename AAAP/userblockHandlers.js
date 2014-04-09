@@ -27,9 +27,9 @@ function userBlockNew(postData, respons)
 				if(err == null)
 				{
 					var newObject = [ {
-					 userNameRow : postData[userNameRow],
-					 blockedUserRow : postData[blockedUserRow],
-					 userBlockidRow : postData[userNameRow]+postData[blockedUserRow] },
+					 'username' : postData[userNameRow],
+					 'blockeduser' : postData[blockedUserRow],
+					 'userblockid' : postData[userNameRow]+postData[blockedUserRow] },
 					 valid];
 					response.write(JSON.stringify(newObject));
 				}
