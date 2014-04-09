@@ -10,6 +10,7 @@ var sponsoridRow = 'sponsorid';
 var passwordRow = 'password';
 var lastConnectionRow = 'lastconnection';
 var emailRow = 'email';
+var phonenumberRow = "phonenumber";
 
 var valid =  {"valid": true};
 var invalid =  {"valid" : false};
@@ -54,8 +55,8 @@ function memberNew(postData, response)
 		{
 			var queryElements = [postData[groupidRow], postData[firstNameRow], postData[userNameRow],
 						 		 postData[sponsoridRow], postData[passwordRow], postData["connection"],
-						 		 postData[emailRow]];
-			var sqlQuery = "INSERT INTO `members` (`groupid`, `firstname`, `username`, `sponsorid`, `password`, `lastconnection`, `email`) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}');";
+						 		 postData[emailRow], postData[phonenumberRow]];
+			var sqlQuery = "INSERT INTO `members` (`groupid`, `firstname`, `username`, `sponsorid`, `password`, `lastconnection`, `email`,`phonenumber`) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}','{7}');";
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
 			
 			connection.query(sqlQuery, function(err, rows)
@@ -95,7 +96,7 @@ function memberGetInfo(postData, response)
 		if (connectionerr == null)
 		{
 			var queryElements = [ postData[groupidRow] ];
-			var sqlQuery = "SELECT * FROM `members` WHERE `groupid`='{0}';";
+			var sqlQuery = "SELECT members.groupid,members.firstname,members.username,members.email,members.sponsorid,members.phonenumber FROM `members` WHERE `groupid`='{0}';";
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
 
 			connection.query(sqlQuery, function(err, rows)
@@ -158,8 +159,8 @@ function memberEdit(postData, response)
 
 			var queryElements = [ postData[oldusernameRow], postData[firstNameRow], postData[userNameRow],
 			 					  postData[sponsoridRow], postData[passwordRow], postData["connection"],
-			 					  postData[emailRow]];
-			var sqlQuery = "UPDATE `members` SET `firstname`='{1}', `username`='{2}', `sponsorid`='{3}', `password`='{4}', `lastconnection`='{5}', `email`='{6}' WHERE `username`='{0}' LIMIT 1;";
+			 					  postData[emailRow], postData[phonenumberRow]];
+			var sqlQuery = "UPDATE `members` SET `firstname`='{1}', `username`='{2}', `sponsorid`='{3}', `password`='{4}', `lastconnection`='{5}', `email`='{6}', `phonenumber`='{7}' WHERE `username`='{0}' LIMIT 1;";
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
 
 			connection.query(sqlQuery, function(err, rows)

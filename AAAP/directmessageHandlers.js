@@ -20,7 +20,7 @@ function directMessageNew(postData, response)
 	{
 		if (connectionerr == null)
 		{
-			var time = moment().format(utility.dateFormat); 
+			var time = moment().subtract('hour',5).format(utility.dateFormat); 
 			var queryElements = [ time, postData[messageRow],
 								  postData[timeoutRow], postData[usernameRow],
 								  postData[receiverUserNameRow] ];
@@ -94,9 +94,13 @@ function directMessageRefresh(postData, response)
 	{
 		if (connectionerr == null)
 		{
-			var queryElements = [ postData[usernameRow], postData[receiverUserNameRow],
-								  postData[receiverUserNameRow], postData["directmessageidlimit"] ];
-			var sqlQuery = "SELECT * FROM `directmessages` WHERE ((username='{0}' OR receiversusername LIKE ('%{1},%' OR '%,{2}%')) AND (directmessageid < {3})) ORDER BY directmessageid DESC LIMIT 25;";
+			if (postData === "-")
+			{
+				postData["directmessageidlimit"] = "(SELECT MAX(directmessageid) FROM directmessages)";
+			}
+
+			var queryElements = [ postData[usernameRow], postData[usernameRow], postData["directmessageidlimit"] ];
+			var sqlQuery = "SELECT * FROM `directmessages` WHERE (username='{0}' OR receiversusername = '{1}' AND (directmessageid < '{2}')) ORDER BY directmessageid DESC LIMIT 150;";
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
 
 			connection.query(sqlQuery, function(err, rows)
@@ -127,7 +131,7 @@ function directMessageEdit(postData, response)
 	{
 		if (connectionerr == null)
 		{
-			var time = moment().format(utility.dateFormat); 
+			var time = moment().subtract('hour',5).format(utility.dateFormat); 
 			var queryElements = [ postData[directMessageidRow], time,
 								  postData[messageRow], postData[timeoutRow] ];
 			var sqlQuery = "SET SQL_SAFE_UPDATES=0; UPDATE `directmessages` SET `dateposted`='{1}', `message`='{2}', `timeout`='{3}' WHERE `directmessageid`='{0}';";

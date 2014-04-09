@@ -35,6 +35,7 @@ var userBlockNew = "/userblock/new";
 var userBlockRemove = "/userblock/remove";
 var userBlockGetInfo = "/userblock/getinfo";
 
+var geoRequest = "/georequest"
 var invalidRequest = "invalidRequest"; 
 
 module.exports.RequestPort = RequestPort;
@@ -67,6 +68,7 @@ module.exports.userBlockNew = userBlockNew;
 module.exports.userBlockRemove = userBlockRemove;
 module.exports.userBlockGetInfo = userBlockGetInfo;
 
+module.exports.geoRequest = geoRequest;
 module.exports.invalidRequest;
 
 module.exports.SQLhost = SQLhost;

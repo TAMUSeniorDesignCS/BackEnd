@@ -27,8 +27,9 @@ function postRefresh(postData, response)
 	{
 		if (connectionerr == null)
 		{
-			var queryElements = [ postData[groupidRow], 0 ];
-			var sqlQuery = "SELECT members.firstname,posts.* FROM `members` JOIN `posts` ON members.groupid = {0} AND members.username = posts.username ORDER BY postid DESC LIMIT 25; SELECT * FROM comments;";
+			var queryElements = [ postData[groupidRow], postData[username],
+								  postData["postidlimit"] ];
+			var sqlQuery = "SELECT members.firstname,posts.* FROM `members` JOIN `posts` ON members.groupid = {0} AND members.username = posts.username ORDER BY postid DESC LIMIT 25;";
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
 
 			connection.query(sqlQuery, function(err, rows)
@@ -37,9 +38,9 @@ function postRefresh(postData, response)
 				if(err == null)
 				{
 					var posts = rows[0];
-					var comments = rows[1];
+					//var comments = rows[1];
 					posts.push(valid);
-					for (var i =0; i < posts.length; i++)
+					/*for (var i =0; i < posts.length; i++)
 					{
 						var post = posts[i];
 						post['comments'] = [];
@@ -52,7 +53,7 @@ function postRefresh(postData, response)
 								post['comments'].push(comment);
 							}
 						}
-					}
+					}*/
 					response.write(JSON.stringify(posts));
 				}
 				else
@@ -106,7 +107,7 @@ function postNew(postData, response)
 	{
 		if (connectionerr == null)
 		{
-			var time = moment().format(utility.dateFormat); 
+			var time = moment().subtract('hour',5).format(utility.dateFormat); 
 			var queryElements = [ postData[usernameRow], postData[messageRow],
 								  time, '0000-00-00 00:00:00' ];
 			var sqlQuery = "INSERT INTO `posts` (`username`, `message`, `dateposted`, `timeout`) VALUES ('{0}', '{1}', '{2}' ,'{3}');";
@@ -148,7 +149,7 @@ function postEdit(postData, response)
 	{
 		if (connectionerr == null)
 		{
-			var time = moment().format(utility.dateFormat); 
+			var time = moment().subtract('hour',5).format(utility.dateFormat); 
 			var queryElements = [ postData[postidRow], postData[messageRow],
 								  time, '0000-00-00 00:00:00' ];
 			var sqlQuery = "UPDATE `posts` SET `message`='{1}', `dateposted`='{2}', `timeout`='{3}' WHERE `postid`='{0}';";

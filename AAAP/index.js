@@ -38,6 +38,7 @@ handlerList[config.userBlockNew] = userblockHandlers.userBlockNew;
 handlerList[config.userBlockRemove] = userblockHandlers.userBlockRemove;
 handlerList[config.userBlockGetInfo] = userblockHandlers.userBlockGetInfo;
 
+handlerList[config.geoRequest] = utilityHandlers.geoRequest;
 handlerList[config.invalidRequest] = utilityHandlers.invalidRequest;
 
 server.start(router.route, handlerList);
