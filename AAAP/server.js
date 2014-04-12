@@ -4,6 +4,9 @@ var mysql = require("mysql");
 var config = require("./config")
 var trycatch = require("trycatch");
 var utility = require('./utilityFunctions.js');
+var utilityHandlers = require("./utilityHandlers");
+var memberHandlers = require("./memberHandlers");
+var aaGroupHandlers = require("./aaGroupHandlers");
 var fs = require('fs');
 
 var SQLConnectionSuccessful = true;
@@ -18,11 +21,11 @@ var SQLConnectionPool = mysql.createPool({
 	time_zone : "SYSTEM"
 	});
 
-/*var ServerOptions = {
-	port: 443,
-	key: fs.readFileSync(),
-	cert: fs.readFileSync()
-};*/
+var ServerOptions = {
+	//key: fs.readFileSync('./server.key'),
+	//cert: fs.readFileSync('./server.crt')
+	//passphrase: 'asdfghjkl'
+};
 
 function start(route, requestHandlers)
 {
@@ -51,6 +54,12 @@ function start(route, requestHandlers)
 	  	//console.log(postData);
 	  	postData["connection"] = request.connection.remoteAddress;
 	  	handler = route(request, requestHandlers);
+
+	  	//if (handler != memberHandlers.memberAuth && handler != aaGroupHandlers.aaGroupAuth && handler != utilityHandlers.invalidRequest && utilityHandlers.authRequest(postData))
+	  	//{
+
+	  	//}
+
 	  	handler(postData, response);
 	  });
 	}
@@ -60,6 +69,7 @@ function start(route, requestHandlers)
 	if (SQLConnectionSuccessful)
 	{
 		http.createServer(onRequest).listen(config.RequestPort);
+		//https.createServer(ServerOptions,onRequest).listen(443);
 		console.log("Server listening on port " + config.RequestPort +".");
 	}
 }

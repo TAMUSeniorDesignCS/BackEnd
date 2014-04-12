@@ -25,11 +25,16 @@ function postRefresh(postData, response)
 
 	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
-		if (connectionerr == null)
+		if (connectionerr == null && !(utility.stringContains(typeof(postData[groupidRow])+typeof(postData[usernameRow])+typeof(postData["postidlimit"]),"undefined")))
 		{
-			var queryElements = [ postData[groupidRow], postData[username],
+			if (postData["postidlimit"] === "-")
+			{
+				postData["postidlimit"] = "(SELECT MAX(postid) FROM posts)";
+			}
+
+			var queryElements = [ postData[groupidRow], postData[usernameRow],
 								  postData["postidlimit"] ];
-			var sqlQuery = "SELECT members.firstname,posts.* FROM `members` JOIN `posts` ON members.groupid = {0} AND members.username = posts.username ORDER BY postid DESC LIMIT 25;";
+			var sqlQuery = "SELECT c.firstname,posts.* FROM (`posts` JOIN (SELECT members.firstname,members.username FROM `members` WHERE members.groupid = '{0}' AND members.username NOT IN (SELECT userblocks.blockeduser FROM `userblocks` WHERE userblocks.username = '{1}')) AS c ON posts.username = c.username) WHERE (postid <= {2}) ORDER BY postid DESC LIMIT 25;";
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
 
 			connection.query(sqlQuery, function(err, rows)
@@ -37,9 +42,8 @@ function postRefresh(postData, response)
 				response.writeHead(200, {"Content-Type": "application/json"});
 				if(err == null)
 				{
-					var posts = rows[0];
-					//var comments = rows[1];
-					posts.push(valid);
+					rows.push(valid);
+					//var comments = rows[1]; HAS TO DEAL WITH COMMENTS. NOT NEEDED NOW.
 					/*for (var i =0; i < posts.length; i++)
 					{
 						var post = posts[i];
@@ -54,7 +58,7 @@ function postRefresh(postData, response)
 							}
 						}
 					}*/
-					response.write(JSON.stringify(posts));
+					response.write(JSON.stringify(rows));
 				}
 				else
 				{
@@ -64,6 +68,11 @@ function postRefresh(postData, response)
 
 			});
 			connection.release();
+		}
+		else
+		{
+			response.write(JSON.stringify(invalid));
+			response.end();
 		}
 	});
 }

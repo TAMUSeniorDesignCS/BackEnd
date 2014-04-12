@@ -18,7 +18,6 @@ var invalid =  {"valid" : false};
 function memberAuth(postData, response)
 {
 	//console.log("member/auth handler called")
-
 	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
 		if (connectionerr == null)
@@ -27,7 +26,7 @@ function memberAuth(postData, response)
 			var sqlQuery = "SELECT * FROM `members` WHERE `username`='{0}' AND `password`='{1}' LIMIT 1;";
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
 			connection.query(sqlQuery, function(err, rows)
-			{
+			{	
 				response.writeHead(200, { "Content-Type": "application/json"});
 				if(err == null && rows.length > 0)
 				{

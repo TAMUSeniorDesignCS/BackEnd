@@ -9,7 +9,7 @@ var userBlockidRow = "userblockid";
 var valid =  {"valid": true};
 var invalid =  {"valid" : false};
 
-function userBlockNew(postData, respons)
+function userBlockNew(postData, response)
 {
 	//console.log("userblock/new handler called")
 
@@ -45,7 +45,7 @@ function userBlockNew(postData, respons)
 	});
 }
 
-function userBlockRemove(postData, respons)
+function userBlockRemove(postData, response)
 {
 	//console.log("userblock/remove handler called")
 
@@ -76,7 +76,7 @@ function userBlockRemove(postData, respons)
 	});
 }
 
-function userBlockGetInfo(postData, respons)
+function userBlockGetInfo(postData, response)
 {
 	//console.log("userblock/refresh handler called")
 

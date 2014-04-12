@@ -1,5 +1,7 @@
 var dateFormat = "YYYY-MM-DD HH:mm:ss";
 
+
+
 function stringFormat(string, array)
 {
 	var i = 0;
