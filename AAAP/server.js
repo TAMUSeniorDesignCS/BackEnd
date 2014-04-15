@@ -9,6 +9,7 @@ var memberHandlers = require("./memberHandlers");
 var aaGroupHandlers = require("./aaGroupHandlers");
 var fs = require('fs');
 var moment = require('moment');
+var crypto = require('crypto');
 
 var SQLConnectionSuccessful = true;
 var invalid =  {"valid" : false} ;
@@ -69,10 +70,10 @@ function start(route, requestHandlers)
 	  		{
 	  			SQLConnectionPool.getConnection(function(connectionerr, connection)
 				{
-					if (connectionerr == null)
+					if (connectionerr == null && typeof(postData["rpassword"]) != "undefined")
 					{	
 						//console.log("member/auth handler called")
-						//postData["rpassword"] = crypto.createHash('sha256').update(postData["rpassword"]).digest('base64');
+						postData["rpassword"] = crypto.createHash('sha256').update(postData["rpassword"]).digest('base64');
 						var queryElements = [ postData["rusername"], postData["rpassword"], postData["rusername"], postData["connection"] ];
 						var sqlQuery = "SELECT * FROM `members` WHERE `username`='{0}' AND `password`='{1}' LIMIT 1; UPDATE `members` SET `lastconnection`='{3}' WHERE `username`='{2}';";
 						sqlQuery = utility.stringFormat(sqlQuery, queryElements);

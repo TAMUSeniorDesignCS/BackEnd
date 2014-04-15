@@ -16,7 +16,7 @@ var usernameRow = "username";
 function directMessageNew(postData, response)
 {
 	//console.log("directmessage/new handler called")
-
+	console.log(postData);
 	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
 		if (connectionerr == null)
@@ -52,6 +52,7 @@ function directMessageNew(postData, response)
 				}
 				else
 				{
+					console.log(err);
 					response.write(JSON.stringify([invalid]));
 				}
 				response.end();

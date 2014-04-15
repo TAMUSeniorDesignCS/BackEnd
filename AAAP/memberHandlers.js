@@ -12,6 +12,7 @@ var passwordRow = 'password';
 var lastConnectionRow = 'lastconnection';
 var emailRow = 'email';
 var phonenumberRow = "phonenumber"; 
+var displayphonenumberRow = "displayphonenumber";
 
 var valid =  {"valid": true};
 var invalid =  {"valid" : false};
@@ -23,9 +24,9 @@ function memberAuth(postData, response)
 	{
 		if (connectionerr == null)
 		{
-			//postData[passwordRow] = crypto.createHash('sha256').update(postData[passwordRow]).digest('base64');
+			postData[passwordRow] = crypto.createHash('sha256').update(postData[passwordRow]).digest('base64');
 			var queryElements = [ postData[userNameRow], postData[passwordRow] ];
-			var sqlQuery = "SELECT members.groupid,members.firstname,members.username,members.sponsorid,members.email,members.phonenumber FROM `members` WHERE `username`='{0}' AND `password`='{1}' LIMIT 1;";
+			var sqlQuery = "SELECT members.groupid,members.firstname,members.username,members.sponsorid,members.email,members.phonenumber,members.displayphonenumber FROM `members` WHERE `username`='{0}' AND `password`='{1}' LIMIT 1;";
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
 			connection.query(sqlQuery, function(err, rows)
 			{	
@@ -59,7 +60,7 @@ function memberNew(postData, response)
 	{
 		if (connectionerr == null)
 		{
-			//postData[passwordRow] = crypto.createHash('sha256').update(postData[passwordRow]).digest('base64');
+			postData[passwordRow] = crypto.createHash('sha256').update(postData[passwordRow]).digest('base64');
 			var queryElements = [postData[groupidRow], postData[firstNameRow], postData[userNameRow],
 						 		 postData[sponsoridRow], postData[passwordRow], postData["connection"],
 						 		 postData[emailRow], postData[phonenumberRow]];
@@ -77,7 +78,8 @@ function memberNew(postData, response)
 					  'username' : postData[userNameRow],
 					  'sponsorid' : postData[sponsoridRow],
 					  'email' : postData[emailRow],
-					  'phonenumber' : postData[phonenumberRow] },
+					  'phonenumber' : postData[phonenumberRow],
+					  'displayphonenumber' : 1 },
 					  valid];
 
 					response.write(JSON.stringify(newObject));
@@ -114,7 +116,14 @@ function memberGetInfo(postData, response)
 		if (connectionerr == null)
 		{
 			var queryElements = [ postData[groupidRow] ];
-			var sqlQuery = "SELECT members.groupid,members.firstname,members.username,members.sponsorid,members.phonenumber FROM `members` WHERE `groupid`='{0}' ORDER BY firstname, username;";
+			var sqlQuery = "SELECT members.groupid,members.firstname,members.username,members.sponsorid,members.phonenumber,members.displayphonenumber FROM `members` WHERE `groupid`='{0}' ORDER BY firstname, username;";
+			
+			if (postData[groupidRow] == '-1' && typeof(postData[userNameRow]) != "invalid")
+			{
+				queryElements = [ postData[userNameRow] ];
+				sqlQuery = "SELECT members.groupid,members.firstname,members.username,members.sponsorid,members.phonenumber,members.displayphonenumber FROM `members` WHERE `username`='{0}' LIMIT 1;";
+			} 
+
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
 
 			connection.query(sqlQuery, function(err, rows)
@@ -184,11 +193,11 @@ function memberEdit(postData, response)
 	{
 		if (connectionerr == null)
 		{
-			//postData[passwordRow] = crypto.createHash('sha256').update(postData[passwordRow]).digest('base64');
+			postData[passwordRow] = crypto.createHash('sha256').update(postData[passwordRow]).digest('base64');
 			var queryElements = [ postData[oldusernameRow], postData[firstNameRow], postData[userNameRow],
 			 					  postData[sponsoridRow], postData[passwordRow], postData["connection"],
-			 					  postData[emailRow], postData[phonenumberRow]];
-			var sqlQuery = "UPDATE `members` SET `firstname`='{1}', `username`='{2}', `sponsorid`='{3}', `password`='{4}', `lastconnection`='{5}', `email`='{6}', `phonenumber`='{7}' WHERE `username`='{0}' LIMIT 1;";
+			 					  postData[emailRow], postData[phonenumberRow], postData[displayphonenumberRow]];
+			var sqlQuery = "UPDATE `members` SET `firstname`='{1}', `username`='{2}', `sponsorid`='{3}', `password`='{4}', `lastconnection`='{5}', `email`='{6}', `phonenumber`='{7}', `displayphonenumber`='{8}' WHERE `username`='{0}' LIMIT 1;";
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
 
 			connection.query(sqlQuery, function(err, rows)
@@ -201,13 +210,14 @@ function memberEdit(postData, response)
 					 'username' : postData[userNameRow],
 					 'sponsorid' : postData[sponsoridRow],
 					 'email' : postData[emailRow],
-					 'phonenumber' : postData[phonenumberRow] }
+					 'phonenumber' : postData[phonenumberRow],
+					 'displayphonenumber' : postData[displayphonenumberRow] }
 					, valid];
 					response.write(JSON.stringify(updatedObject));
 				}
 				else
 				{
-					
+					console.log(err);
 					response.write(JSON.stringify([invalid]));
 				}
 				response.end();
