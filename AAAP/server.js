@@ -55,7 +55,7 @@ function start(route, requestHandlers)
 	    }
 	    var time = moment().subtract('hour',4).format(utility.dateFormat);
 	    console.log(time);
-	  	//console.log(postData);
+	  	console.log(postData);
 	  	postData["size"] = utility.getObjectSize(postData);
 	  	postData["connection"] = request.connection.remoteAddress;
 	  	handler = route(request, requestHandlers);
