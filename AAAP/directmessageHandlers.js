@@ -21,9 +21,16 @@ function directMessageNew(postData, response)
 	{
 		if (connectionerr == null)
 		{
-			var time = moment().subtract('hour',5).format(utility.dateFormat); 
+			var time = moment().add('hour',6).format(utility.dateFormat); 
+			var timeout = moment().add('hour',6).add('hours',postData[timeoutRow]).format(utility.dateFormat);
+
+			if (postData[timeoutRow] == "0")
+			{
+				timeout = "0000-00-00 00:00:00";
+			}
+
 			var queryElements = [ time, postData[messageRow],
-								  "0000-00-00 00:00:00", postData[usernameRow],
+								  timeout, postData[usernameRow],
 								  postData[receiversUserNameRow] ];
 			var sqlQuery = "INSERT INTO `directmessages` (`dateposted`, `message`, `timeout`, `username`, `receiversusername`) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}');";
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
@@ -38,7 +45,7 @@ function directMessageNew(postData, response)
 					 'message' : postData[messageRow],
 					 'directmessageid' : rows.insertId,
 					 'dateposted' : time,
-					 'timeout' : '0000-00-00 00:00:00' },
+					 'timeout' : timeout },
 					 valid];
 
 					response.write(JSON.stringify(newObject));
@@ -51,6 +58,11 @@ function directMessageNew(postData, response)
 
 			});
 			connection.release();
+		}
+		else
+		{
+			response.write(JSON.stringify(invalid));
+			response.end();
 		}
 	});
 }
@@ -82,6 +94,11 @@ function directMessageRemove(postData, response)
 
 			});
 			connection.release();
+		}
+		else
+		{
+			response.write(JSON.stringify(invalid));
+			response.end();
 		}
 	});
 }
@@ -120,6 +137,11 @@ function directMessageRefresh(postData, response)
 			});
 			connection.release();
 		}
+		else
+		{
+			response.write(JSON.stringify(invalid));
+			response.end();
+		}
 	});
 }
 
@@ -131,10 +153,28 @@ function directMessageEdit(postData, response)
 	{
 		if (connectionerr == null)
 		{
-			var time = moment().subtract('hour',5).format(utility.dateFormat); 
+			var time = moment().add('hour',6).format(utility.dateFormat);
+			var timeout = moment().add('hour',6).add('hours',postData[timeoutRow]).format(utility.dateFormat);
+			var timeoutString = ", `timeout`="
+
+			if (timeoutRow == "-1")
+			{
+				timeout = "unchanged";
+				timeoutString = "";
+			}
+			else if (timeoutRow == "0")
+			{
+				timeout = '0000-00-00 00:00:00';
+				timeoutString = timeoutString + timeout;
+			}
+			else
+			{
+				timeoutString = timeoutString + "'" + timeout + "'";
+			}
+
 			var queryElements = [ postData[directMessageidRow], time,
-								  postData[messageRow], "0000-00-00 00:00:00" ];
-			var sqlQuery = "SET SQL_SAFE_UPDATES=0; UPDATE `directmessages` SET `dateposted`='{1}', `message`='{2}', `timeout`='{3}' WHERE `directmessageid`='{0}';";
+								  postData[messageRow], timeoutString ];
+			var sqlQuery = "SET SQL_SAFE_UPDATES=0; UPDATE `directmessages` SET `dateposted`='{1}', `message`='{2}' {3} WHERE `directmessageid`='{0}';";
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
 
 			connection.query(sqlQuery, function(err, rows)
@@ -146,7 +186,7 @@ function directMessageEdit(postData, response)
 					 'message' : postData[messageRow],
 					 'directMessageid' : postData[directMessageidRow],
 					 'dateposted' : time,
-					 'timeout' : '0000-00-00 00:00:00' },
+					 'timeout' : timeout },
 					 valid];
 
 					response.write(JSON.stringify(editedObject));
@@ -159,6 +199,11 @@ function directMessageEdit(postData, response)
 
 			});
 			connection.release();
+		}
+		else
+		{
+			response.write(JSON.stringify(invalid));
+			response.end();
 		}
 	});
 }

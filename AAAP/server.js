@@ -8,8 +8,10 @@ var utilityHandlers = require("./utilityHandlers");
 var memberHandlers = require("./memberHandlers");
 var aaGroupHandlers = require("./aaGroupHandlers");
 var fs = require('fs');
+var moment = require('moment');
 
 var SQLConnectionSuccessful = true;
+var invalid =  {"valid" : false} ;
 
 var SQLConnectionPool = mysql.createPool({
 	host : config.SQLhost,
@@ -50,17 +52,58 @@ function start(route, requestHandlers)
 	  	{ 
 	  		postData = JSON.parse(postData);
 	    }
-
+	    var time = moment().subtract('hour',4).format(utility.dateFormat);
+	    console.log(time);
 	  	//console.log(postData);
+	  	postData["size"] = utility.getObjectSize(postData);
 	  	postData["connection"] = request.connection.remoteAddress;
 	  	handler = route(request, requestHandlers);
 
-	  	//if (handler != memberHandlers.memberAuth && handler != aaGroupHandlers.aaGroupAuth && handler != utilityHandlers.invalidRequest && utilityHandlers.authRequest(postData))
-	  	//{
+	  	if (utility.checkObject(postData))
+	  	{
+	  		if (handler === memberHandlers.memberNew || handler === memberHandlers.memberAuth || handler === aaGroupHandlers.aaGroupAuth || handler === utilityHandlers.invalidRequest)
+	  		{
+	  			handler(postData, response);
+	  		}
+	  		else
+	  		{
+	  			SQLConnectionPool.getConnection(function(connectionerr, connection)
+				{
+					if (connectionerr == null)
+					{	
+						//console.log("member/auth handler called")
+						//postData["rpassword"] = crypto.createHash('sha256').update(postData["rpassword"]).digest('base64');
+						var queryElements = [ postData["rusername"], postData["rpassword"], postData["rusername"], postData["connection"] ];
+						var sqlQuery = "SELECT * FROM `members` WHERE `username`='{0}' AND `password`='{1}' LIMIT 1; UPDATE `members` SET `lastconnection`='{3}' WHERE `username`='{2}';";
+						sqlQuery = utility.stringFormat(sqlQuery, queryElements);
+						var query = connection.query(sqlQuery, function(err, rows)
+						{
+							if(err == null && rows.length > 0)
+							{
+								handler(postData, response);
+							}
+							else
+							{
+								response.write(JSON.stringify([invalid]));
+								response.end();
+							}
+						});
+					}
+					else
+					{
+						response.write(JSON.stringify([invalid]));
+						response.end();
+					}
 
-	  	//}
-
-	  	handler(postData, response);
+					connection.release();
+				});
+	  		}
+	  	}
+	  	else
+	  	{
+			response.write(JSON.stringify([invalid]));
+			response.end();
+	  	}
 	  });
 	}
 

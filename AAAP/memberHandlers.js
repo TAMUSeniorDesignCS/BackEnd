@@ -1,6 +1,7 @@
 var mysql = require('mysql');
 var server = require('./server.js');
 var utility = require('./utilityFunctions.js');
+var crypto = require('crypto');
 
 //Rows for member Table
 var groupidRow = 'groupid';
@@ -10,7 +11,7 @@ var sponsoridRow = 'sponsorid';
 var passwordRow = 'password';
 var lastConnectionRow = 'lastconnection';
 var emailRow = 'email';
-var phonenumberRow = "phonenumber";
+var phonenumberRow = "phonenumber"; 
 
 var valid =  {"valid": true};
 var invalid =  {"valid" : false};
@@ -22,8 +23,9 @@ function memberAuth(postData, response)
 	{
 		if (connectionerr == null)
 		{
+			//postData[passwordRow] = crypto.createHash('sha256').update(postData[passwordRow]).digest('base64');
 			var queryElements = [ postData[userNameRow], postData[passwordRow] ];
-			var sqlQuery = "SELECT * FROM `members` WHERE `username`='{0}' AND `password`='{1}' LIMIT 1;";
+			var sqlQuery = "SELECT members.groupid,members.firstname,members.username,members.sponsorid,members.email,members.phonenumber FROM `members` WHERE `username`='{0}' AND `password`='{1}' LIMIT 1;";
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
 			connection.query(sqlQuery, function(err, rows)
 			{	
@@ -41,6 +43,11 @@ function memberAuth(postData, response)
 			});
 			connection.release();
 		}
+		else
+		{
+			response.write(JSON.stringify(invalid));
+			response.end();
+		}
 	});
 }
 
@@ -52,6 +59,7 @@ function memberNew(postData, response)
 	{
 		if (connectionerr == null)
 		{
+			//postData[passwordRow] = crypto.createHash('sha256').update(postData[passwordRow]).digest('base64');
 			var queryElements = [postData[groupidRow], postData[firstNameRow], postData[userNameRow],
 						 		 postData[sponsoridRow], postData[passwordRow], postData["connection"],
 						 		 postData[emailRow], postData[phonenumberRow]];
@@ -68,7 +76,6 @@ function memberNew(postData, response)
 					  'firstName' : postData[firstNameRow],
 					  'username' : postData[userNameRow],
 					  'sponsorid' : postData[sponsoridRow],
-					  'password' : postData[passwordRow],
 					  'email' : postData[emailRow],
 					  'phonenumber' : postData[phonenumberRow] },
 					  valid];
@@ -77,11 +84,22 @@ function memberNew(postData, response)
 				}
 				else
 				{
-					response.write(JSON.stringify([invalid]));
+					//Seems dumb because dup usernames cause this almost everytime.... but I bet it doesn't :)
+					var dupUser = "";
+					if (err.code == "ER_DUP_ENTRY")
+					{
+						dupUser = "ERROR";
+					}
+					response.write(JSON.stringify([invalid, {"duplicateusername" : dupUser}]));
 				}
 				response.end();
 			});
 			connection.release();
+		}
+		else
+		{
+			response.write(JSON.stringify(invalid));
+			response.end();
 		}
 	});
 
@@ -96,7 +114,7 @@ function memberGetInfo(postData, response)
 		if (connectionerr == null)
 		{
 			var queryElements = [ postData[groupidRow] ];
-			var sqlQuery = "SELECT members.groupid,members.firstname,members.username,members.email,members.sponsorid,members.phonenumber FROM `members` WHERE `groupid`='{0}';";
+			var sqlQuery = "SELECT members.groupid,members.firstname,members.username,members.sponsorid,members.phonenumber FROM `members` WHERE `groupid`='{0}' ORDER BY firstname, username;";
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
 
 			connection.query(sqlQuery, function(err, rows)
@@ -115,6 +133,11 @@ function memberGetInfo(postData, response)
 			});
 			connection.release();
 		}
+		else
+		{
+			response.write(JSON.stringify(invalid));
+			response.end();
+		}
 	});
 }
 
@@ -126,7 +149,7 @@ function memberRemove(postData, response)
 	{
 		if (connectionerr == null)
 		{
-			var queryElements = [ postData[usernameRow] ];
+			var queryElements = [ postData[userNameRow] ];
 			var sqlQuery = "DELETE FROM `members` WHERE `username`='{0}' LIMIT 1;";
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
 
@@ -145,6 +168,11 @@ function memberRemove(postData, response)
 			});
 			connection.release();
 		}
+		else
+		{
+			response.write(JSON.stringify(invalid));
+			response.end();
+		}
 	});
 }
 
@@ -156,7 +184,7 @@ function memberEdit(postData, response)
 	{
 		if (connectionerr == null)
 		{
-
+			//postData[passwordRow] = crypto.createHash('sha256').update(postData[passwordRow]).digest('base64');
 			var queryElements = [ postData[oldusernameRow], postData[firstNameRow], postData[userNameRow],
 			 					  postData[sponsoridRow], postData[passwordRow], postData["connection"],
 			 					  postData[emailRow], postData[phonenumberRow]];
@@ -172,7 +200,6 @@ function memberEdit(postData, response)
 					{'firstname' : postData[firstNameRow],
 					 'username' : postData[userNameRow],
 					 'sponsorid' : postData[sponsoridRow],
-					 'password' :  postData[passwordRow],
 					 'email' : postData[emailRow],
 					 'phonenumber' : postData[phonenumberRow] }
 					, valid];
@@ -186,6 +213,11 @@ function memberEdit(postData, response)
 				response.end();
 			});
 			connection.release();
+		}
+		else
+		{
+			response.write(JSON.stringify(invalid));
+			response.end();
 		}
 	});
 }

@@ -1,6 +1,18 @@
 var dateFormat = "YYYY-MM-DD HH:mm:ss";
 
-
+function checkObject(object)
+{
+	var validObject = true;
+	for(var entry in object)
+	{
+		 if (entry === "" || typeof(entry) === "undefined")
+		 {
+		 	validRequest = false;
+		 	break;
+		 }
+	}
+	return validObject;
+}
 
 function stringFormat(string, array)
 {
@@ -40,6 +52,17 @@ function stringContains(start, string)
 	}
 }
 
+function getObjectSize(obj) 
+{
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
+};
+
 module.exports.stringFormat = stringFormat;
 module.exports.stringContains = stringContains;
 module.exports.dateFormat = dateFormat;
+module.exports.getObjectSize = getObjectSize;
+module.exports.checkObject = checkObject;

@@ -25,7 +25,7 @@ function postRefresh(postData, response)
 
 	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
-		if (connectionerr == null && !(utility.stringContains(typeof(postData[groupidRow])+typeof(postData[usernameRow])+typeof(postData["postidlimit"]),"undefined")))
+		if (connectionerr == null)
 		{
 			if (postData["postidlimit"] === "-")
 			{
@@ -105,6 +105,11 @@ function postRemove(postData, response)
 			});
 			connection.release();
 		}
+		else
+		{
+			response.write(JSON.stringify(invalid));
+			response.end();
+		}
 	});
 }
 
@@ -116,9 +121,16 @@ function postNew(postData, response)
 	{
 		if (connectionerr == null)
 		{
-			var time = moment().subtract('hour',5).format(utility.dateFormat); 
+			var time = moment().add('hour',6).format(utility.dateFormat);
+			var timeout = moment().add('hour',6).add('hours',postData[timeoutRow]).format(utility.dateFormat);
+
+			if (postData[timeoutRow] == "0")
+			{
+				timeout = "0000-00-00 00:00:00";
+			}
+
 			var queryElements = [ postData[usernameRow], postData[messageRow],
-								  time, '0000-00-00 00:00:00' ];
+								  time, timeout ];
 			var sqlQuery = "INSERT INTO `posts` (`username`, `message`, `dateposted`, `timeout`) VALUES ('{0}', '{1}', '{2}' ,'{3}');";
 
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
@@ -133,7 +145,7 @@ function postNew(postData, response)
 					 'message' : postData[messageRow],
 					 'postid' : rows.insertId,
 					 'dateposted' : time,
-					 'timeout' : '0000-00-00 00:00:00' },
+					 'timeout' : timeout },
 					 valid];
 
 					response.write(JSON.stringify(newObject))
@@ -147,6 +159,11 @@ function postNew(postData, response)
 			});
 			connection.release();
 		}
+		else
+		{
+			response.write(JSON.stringify(invalid));
+			response.end();
+		}
 	});
 }
 
@@ -155,13 +172,33 @@ function postEdit(postData, response)
 	//console.log("post/edit handler called")
 
 	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
-	{
+	{	
 		if (connectionerr == null)
 		{
-			var time = moment().subtract('hour',5).format(utility.dateFormat); 
+			var time = moment().add('hour',6).format(utility.dateFormat);
+			var timeout = moment().add('hour',6).add('hours',postData[timeoutRow]).format(utility.dateFormat);
+			var timeoutString = ", `timeout`="
+
+			//-1 means do not change the timeout
+			if (timeoutRow == "-1")
+			{
+				timeout = "unchanged";
+				timeoutString = "";
+			}
+			//0 means delete the timeout
+			else if (timeoutRow == "0")
+			{
+				timeout = '0000-00-00 00:00:00';
+				timeoutString = timeoutString + timeout;
+			}
+			else
+			{
+				timeoutString = timeoutString + "'" + timeout + "'";
+			}
+
 			var queryElements = [ postData[postidRow], postData[messageRow],
-								  time, '0000-00-00 00:00:00' ];
-			var sqlQuery = "UPDATE `posts` SET `message`='{1}', `dateposted`='{2}', `timeout`='{3}' WHERE `postid`='{0}';";
+								  time, timeoutString ];
+			var sqlQuery = "UPDATE `posts` SET `message`='{1}', `dateposted`='{2}' {3} WHERE `postid`='{0}';";
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
 
 			connection.query(sqlQuery, function(err, rows)
@@ -173,7 +210,7 @@ function postEdit(postData, response)
 					 'message' : postData[messageRow],
 					 'postid' : rows.insertId,
 					 'dateposted' : time,
-					 'timeout' : '0000-00-00 00:00:00' },
+					 'timeout' : timeout },
 					 valid];
 
 					response.write(JSON.stringify(updatedObject))
@@ -186,6 +223,11 @@ function postEdit(postData, response)
 
 			});
 			connection.release();
+		}
+		else
+		{
+			response.write(JSON.stringify(invalid));
+			response.end();
 		}
 	});
 }

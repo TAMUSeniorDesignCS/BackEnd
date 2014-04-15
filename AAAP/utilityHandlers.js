@@ -1,34 +1,9 @@
 var http = require('http');
 var mysql = require('mysql');
 var server = require('./server.js');
-
-function authRequest(postData)
-{
-	var userExists = false;
-	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
-	{
-		if (connectionerr == null)
-		{	
-			//console.log("member/auth handler called")
-			var queryElements = [ postData["rusername"], postData["rpassword"] ];
-			var sqlQuery = "SELECT * FROM `members` WHERE `username`='{0}' AND `password`='{1}' LIMIT 1;";
-			sqlQuery = stringFormat(sqlQuery, queryElements);
-			var query = connection.query(sqlQuery, function(err, rows)
-			{
-				if(err == null && rows.length > 0)
-				{
-					userExists = true;
-				}
-				else
-				{
-
-				}
-			});
-			connection.release();
-		}
-	});
-	return userExists;
-}
+var utility = require('./utilityFunctions.js');
+var mailer = require("nodemailer");
+var validRequest = false;
 
 function invalidRequest(postData, response)
 {
@@ -38,19 +13,9 @@ function invalidRequest(postData, response)
   	response.end();
 }
 
-function verifyData(postData)
+function mail(postData, response)
 {
-	for (var i = 0; i < postData.length; i++)
-	{
-		if (typeof postData[i] === 'undefined')
-		{
-			return false;
-		}
-		else
-		{
-			return true;
-		}
-	}
+
 }
 
 function geoRequest(postData, response)
@@ -82,5 +47,3 @@ function geoRequest(postData, response)
 
 module.exports.invalidRequest = invalidRequest;
 module.exports.geoRequest = geoRequest;
-module.exports.authRequest = authRequest;
-module.exports.verifyData = verifyData;

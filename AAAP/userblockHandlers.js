@@ -15,7 +15,7 @@ function userBlockNew(postData, response)
 
 	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
-		if (connectionerr == null)
+		if (connectionerr == null && !(utility.stringContains(typeof(postData[userNameRow])+typeof(postData[blockedUserRow]),"undefined")))
 		{
 			var queryElements = [ postData[userNameRow], postData[blockedUserRow], postData[userNameRow]+postData[blockedUserRow] ];
 			var sqlQuery = "INSERT INTO `userblocks` (`username`, `blockeduser`, `userblockid`) VALUES ('{0}', '{1}', '{2}');";
@@ -42,6 +42,11 @@ function userBlockNew(postData, response)
 			});
 			connection.release();
 		}
+		else
+		{
+			response.write(JSON.stringify(invalid));
+			response.end();
+		}
 	});
 }
 
@@ -51,7 +56,7 @@ function userBlockRemove(postData, response)
 
 	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
-		if (connectionerr == null)
+		if (connectionerr == null && !(utility.stringContains(typeof(postData[userNameRow])+typeof(postData[blockedUserRow]),"undefined")))
 		{
 			var queryElements = [ postData[userNameRow]+postData[blockedUserRow] ];
 			var sqlQuery = "SET SQL_SAFE_UPDATES=0; DELETE FROM `userblocks` WHERE `userblockid`='{0}';";
@@ -72,6 +77,11 @@ function userBlockRemove(postData, response)
 
 			});
 			connection.release();
+		}
+		else
+		{
+			response.write(JSON.stringify(invalid));
+			response.end();
 		}
 	});
 }
@@ -104,6 +114,11 @@ function userBlockGetInfo(postData, response)
 
 			});
 			connection.release();
+		}
+		else
+		{
+			response.write(JSON.stringify(invalid));
+			response.end();
 		}
 	});
 }

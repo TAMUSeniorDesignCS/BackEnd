@@ -40,6 +40,11 @@ function aaGroupAuth(postData, response)
 			});
 			connection.release();
 		}
+		else
+		{
+			response.write(JSON.stringify(invalid));
+			response.end();
+		}
 	});
 
 }
@@ -72,6 +77,11 @@ function aaGroupGetInfo(postData, response)
 
 			});
 			connection.release();
+		}
+		else
+		{
+			response.write(JSON.stringify(invalid));
+			response.end();
 		}
 	});
 }
@@ -111,6 +121,11 @@ function aaGroupEdit(postData, response)
 
 			});
 			connection.release();
+		}
+		else
+		{
+			response.write(JSON.stringify(invalid));
+			response.end();
 		}
 	});
 }
