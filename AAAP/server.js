@@ -25,9 +25,8 @@ var SQLConnectionPool = mysql.createPool({
 	});
 
 var ServerOptions = {
-	//key: fs.readFileSync('./server.key'),
-	//cert: fs.readFileSync('./server.crt')
-	//passphrase: 'asdfghjkl'
+	key: fs.readFileSync('./private-key.pem'),
+	cert: fs.readFileSync('./4ef46a36fe9473.crt')
 };
 
 function start(route, requestHandlers)
@@ -55,7 +54,7 @@ function start(route, requestHandlers)
 	    }
 	    var time = moment().subtract('hour',4).format(utility.dateFormat);
 	    console.log(time);
-	  	console.log(postData);
+	  	//console.log(postData);
 	  	postData["size"] = utility.getObjectSize(postData);
 	  	postData["connection"] = request.connection.remoteAddress;
 	  	handler = route(request, requestHandlers);
@@ -70,7 +69,7 @@ function start(route, requestHandlers)
 	  		{
 	  			SQLConnectionPool.getConnection(function(connectionerr, connection)
 				{
-					if (connectionerr == null && typeof(postData["rpassword"]) != "undefined")
+					if (connectionerr == null && typeof(postData["rpassword"]) != "undefined" && typeof(postData['rusername']) != "undefined")
 					{	
 						//console.log("member/auth handler called")
 						postData["rpassword"] = crypto.createHash('sha256').update(postData["rpassword"]).digest('base64');
@@ -79,7 +78,9 @@ function start(route, requestHandlers)
 						sqlQuery = utility.stringFormat(sqlQuery, queryElements);
 						var query = connection.query(sqlQuery, function(err, rows)
 						{
-							if(err == null && rows.length > 0)
+							var members = rows[0];
+							var member = members[0];
+							if(err == null && typeof(member) != "undefined" && member['username'] === postData['rusername'])
 							{
 								handler(postData, response);
 							}
@@ -113,7 +114,7 @@ function start(route, requestHandlers)
 	if (SQLConnectionSuccessful)
 	{
 		http.createServer(onRequest).listen(config.RequestPort);
-		//https.createServer(ServerOptions,onRequest).listen(443);
+		https.createServer(ServerOptions,onRequest).listen(443);
 		console.log("Server listening on port " + config.RequestPort +".");
 	}
 }

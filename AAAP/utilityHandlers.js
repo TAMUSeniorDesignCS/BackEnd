@@ -13,9 +13,38 @@ function invalidRequest(postData, response)
   	response.end();
 }
 
-function mail(postData, response)
-{
-
+function passwordReset(postData, response)
+{ //NOT necessary so will not be implemented.
+	//console.log("passwordReset handler called")
+/*
+	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
+	{
+		if (connectionerr == null)
+		{
+			var queryElements = [ postData[userNameRow], time ];
+			var sqlQuery = "INSERT INTO `sponsortable` (`username`, `dateposted`) VALUES ('{0}', '{1}');";
+			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
+			connection.query(sqlQuery, function(err, rows)
+			{
+				response.writeHead(200, { "Content-Type": "application/json"})
+				if(err == null)
+				{
+					response.write(JSON.stringify([valid]));
+				}
+				else
+				{
+					response.write(JSON.stringify([invalid]));
+				}
+				response.end();
+			});
+			connection.release();
+		}
+		else
+		{
+			response.write(JSON.stringify(invalid));
+			response.end();
+		}
+	});*/
 }
 
 function geoRequest(postData, response)
@@ -47,3 +76,4 @@ function geoRequest(postData, response)
 
 module.exports.invalidRequest = invalidRequest;
 module.exports.geoRequest = geoRequest;
+module.exports.passwordReset = passwordReset;

@@ -16,7 +16,7 @@ var usernameRow = "username";
 function directMessageNew(postData, response)
 {
 	//console.log("directmessage/new handler called")
-	console.log(postData);
+
 	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
 	{
 		if (connectionerr == null)
@@ -52,7 +52,6 @@ function directMessageNew(postData, response)
 				}
 				else
 				{
-					console.log(err);
 					response.write(JSON.stringify([invalid]));
 				}
 				response.end();
@@ -118,7 +117,7 @@ function directMessageRefresh(postData, response)
 			}
 
 			var queryElements = [ postData[usernameRow], postData[usernameRow], postData[usernameRow], postData["directmessageidlimit"] ];
-			var sqlQuery = "SELECT * FROM directmessages WHERE ((directmessages.username = '{0}' OR directmessages.receiversusername = '{1}') AND (directmessages.username NOT IN (SELECT userblocks.blockeduser FROM userblocks WHERE username = '{2}')) AND (directmessageid <= {3})) ORDER BY directmessageid DESC LIMIT 150;";
+			var sqlQuery = "SELECT directmessageid,DATE_SUB(dateposted,INTERVAL 11 HOUR) as dateposted,message,timeout,username,receiversusername FROM directmessages WHERE ((directmessages.username = '{0}' OR directmessages.receiversusername = '{1}') AND (directmessages.username NOT IN (SELECT userblocks.blockeduser FROM userblocks WHERE username = '{2}')) AND (directmessageid <= {3})) ORDER BY directmessageid DESC LIMIT 150;";
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
 
 			connection.query(sqlQuery, function(err, rows)

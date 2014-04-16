@@ -21,6 +21,8 @@ var memberNew = "/member/new";
 var memberGetInfo = "/member/getinfo";
 var memberRemove = "/member/remove";
 var memberEdit = "/member/edit";
+var memberGetLog = "/member/getlog";
+var memberPostLog = "/member/postlog";
 
 var commentNew = "/comment/new";
 var commentRemove = "/comment/remove";
@@ -54,6 +56,8 @@ module.exports.memberNew = memberNew;
 module.exports.memberGetInfo = memberGetInfo;
 module.exports.memberRemove = memberRemove;
 module.exports.memberEdit = memberEdit;
+module.exports.memberGetLog = memberGetLog;
+module.exports.memberPostLog = memberPostLog;
 
 module.exports.commentNew = commentNew;
 module.exports.commentRemove = commentRemove;

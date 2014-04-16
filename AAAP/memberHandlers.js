@@ -2,6 +2,7 @@ var mysql = require('mysql');
 var server = require('./server.js');
 var utility = require('./utilityFunctions.js');
 var crypto = require('crypto');
+var moment = require('moment');
 
 //Rows for member Table
 var groupidRow = 'groupid';
@@ -13,6 +14,7 @@ var lastConnectionRow = 'lastconnection';
 var emailRow = 'email';
 var phonenumberRow = "phonenumber"; 
 var displayphonenumberRow = "displayphonenumber";
+var sponsorusernameRow = "sponsorusername";
 
 var valid =  {"valid": true};
 var invalid =  {"valid" : false};
@@ -217,7 +219,78 @@ function memberEdit(postData, response)
 				}
 				else
 				{
-					console.log(err);
+					response.write(JSON.stringify([invalid]));
+				}
+				response.end();
+			});
+			connection.release();
+		}
+		else
+		{
+			response.write(JSON.stringify(invalid));
+			response.end();
+		}
+	});
+}
+
+function memberPostLog(postData, response)
+{
+	//console.log("member/postlog handler called")
+
+	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
+	{
+		if (connectionerr == null)
+		{
+			var time = moment().add('hour',6).format(utility.dateFormat);
+			var queryElements = [ postData[userNameRow], time ];
+			var sqlQuery = "INSERT INTO `sponsortable` (`username`, `dateposted`) VALUES ('{0}', '{1}');";
+			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
+			
+			connection.query(sqlQuery, function(err, rows)
+			{
+				response.writeHead(200, { "Content-Type": "application/json"})
+				if(err == null)
+				{
+					response.write(JSON.stringify([valid]));
+				}
+				else
+				{
+					response.write(JSON.stringify([invalid]));
+				}
+				response.end();
+			});
+			connection.release();
+		}
+		else
+		{
+			response.write(JSON.stringify(invalid));
+			response.end();
+		}
+	});
+}
+
+function memberGetLog(postData, response)
+{
+	//console.log("member/getlog handler called")
+
+	server.SQLConnectionPool.getConnection(function(connectionerr, connection)
+	{
+		if (connectionerr == null)
+		{
+			var queryElements = [ postData[sponsorusernameRow] ];
+			var sqlQuery = "SELECT d.firstname,d.username,c.riskcount,DATE_SUB(c.maxdate,INTERVAL 11 HOUR) as dateposted FROM (SELECT members.username,members.firstname FROM `members` WHERE sponsorid = '{0}') as d JOIN (SELECT username, COUNT(username) as riskcount,MAX(dateposted) as maxdate FROM sponsortable GROUP BY username) as c GROUP BY c.username;";
+			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
+
+			connection.query(sqlQuery, function(err, rows)
+			{
+				response.writeHead(200, { "Content-Type": "application/json"})
+				if(err == null)
+				{
+					rows.push(valid);
+					response.write(JSON.stringify(rows));
+				}
+				else
+				{
 					response.write(JSON.stringify([invalid]));
 				}
 				response.end();
@@ -237,3 +310,5 @@ module.exports.memberNew = memberNew;
 module.exports.memberGetInfo = memberGetInfo;
 module.exports.memberRemove = memberRemove;
 module.exports.memberEdit = memberEdit;
+module.exports.memberGetLog = memberGetLog;
+module.exports.memberPostLog = memberPostLog;

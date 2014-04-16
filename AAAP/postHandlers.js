@@ -34,7 +34,7 @@ function postRefresh(postData, response)
 
 			var queryElements = [ postData[groupidRow], postData[usernameRow],
 								  postData["postidlimit"] ];
-			var sqlQuery = "SELECT c.firstname,posts.* FROM (`posts` JOIN (SELECT members.firstname,members.username FROM `members` WHERE members.groupid = '{0}' AND members.username NOT IN (SELECT userblocks.blockeduser FROM `userblocks` WHERE userblocks.username = '{1}')) AS c ON posts.username = c.username) WHERE (postid <= {2}) ORDER BY postid DESC LIMIT 25;";
+			var sqlQuery = "SELECT c.firstname, posts.username, posts.message, posts.postid, DATE_SUB(posts.dateposted,INTERVAL 11 HOUR) as dateposted, posts.timeout FROM (`posts` JOIN (SELECT members.firstname,members.username FROM `members` WHERE members.groupid = '{0}' AND members.username NOT IN (SELECT userblocks.blockeduser FROM `userblocks` WHERE userblocks.username = '{1}')) AS c ON posts.username = c.username) WHERE (postid <= {2}) ORDER BY postid DESC LIMIT 25;";
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
 
 			connection.query(sqlQuery, function(err, rows)

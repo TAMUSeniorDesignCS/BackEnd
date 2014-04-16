@@ -24,20 +24,21 @@ namespace ServerLoop
                 {
                     Console.WriteLine("ERROR: Server Clean Unsuccessful!!\n Please Check Database/Server Status!!");
                 }
+                //System.Threading.Thread.Sleep(60000);
             }
             
         }
 
         static void ServerClean()
         {
-            List<string> directmessagesToDelete = AAAPDatabase.SendQuery("SELECT directmessageid FROM directmessages WHERE timeout < NOW() AND timeout != '0000-00-00 00:00:00';");
+            List<string> directmessagesToDelete = AAAPDatabase.SendQuery("SELECT directmessageid FROM directmessages WHERE (timeout < DATE_Add(NOW(), INTERVAL 6 HOUR) AND timeout != '0000-00-00 00:00:00') OR (dateposted < DATE_SUB(DATE_Add(NOW(), INTERVAL 6 HOUR), INTERVAL 7 DAY));");
         
             if (directmessagesToDelete.Count > 0)
             {
-                Console.WriteLine(String.Format("{0} direct messages flagged for deletion"), directmessagesToDelete.Count);
+                Console.WriteLine(String.Format("{0} direct messages flagged for deletion", directmessagesToDelete.Count));
                 foreach (string entry in directmessagesToDelete)
                 {
-                    string dmDeleteQuery = string.Format("DELETE FROM directmessages WHERE `directmessageid`='{0}'", entry);
+                    string dmDeleteQuery = string.Format("DELETE FROM directmessages WHERE `directmessageid`='{0}';", entry);
                     AAAPDatabase.SendQuery(dmDeleteQuery);
                 }
             }
@@ -46,14 +47,15 @@ namespace ServerLoop
                 Console.WriteLine("-No direct messages needed to be deleted");
             }
 
-            List<string> postsToDelete = AAAPDatabase.SendQuery("SELECT postid FROM posts  WHERE (timeout < NOW() AND timeout != '0000-00-00 00:00:00') OR (dateposted < DATE_SUB(NOW(), INTERVAL 7 DAY));");
+            List<string> postsToDelete = AAAPDatabase.SendQuery("SELECT postid FROM posts  WHERE (timeout < DATE_Add(NOW(), INTERVAL 6 HOUR) AND timeout != '0000-00-00 00:00:00') OR (dateposted < DATE_SUB(DATE_Add(NOW(), INTERVAL 6 HOUR), INTERVAL 7 DAY));");
         
             if (postsToDelete.Count > 0)
             {
-                Console.WriteLine(String.Format("{0} posts flagged for deletion"), postsToDelete.Count);
+                Console.WriteLine(String.Format("{0} posts flagged for deletion", postsToDelete.Count));
                 foreach (string entry in postsToDelete)
                 {
-                    string postDeleteQuery = string.Format("DELETE FROM posts WHERE `postid`='{0}'", entry);
+                    Console.WriteLine(entry);
+                    string postDeleteQuery = string.Format("DELETE FROM posts WHERE `postid`='{0}';", entry);
                     AAAPDatabase.SendQuery(postDeleteQuery);
                 }
             }
@@ -61,6 +63,23 @@ namespace ServerLoop
             {
                 Console.WriteLine("-No posts needed to be deleted");
             }
+
+            List<string> memberLogsToDelete = AAAPDatabase.SendQuery("SELECT logid FROM sponsortable WHERE dateposted < DATE_SUB(DATE_Add(NOW(), INTERVAL 6 HOUR),INTERVAL 7 DAY);");
+
+            if (memberLogsToDelete.Count > 0)
+            {
+                Console.WriteLine(String.Format("{0} logs flagged for deletion", memberLogsToDelete.Count));
+                foreach (string entry in memberLogsToDelete)
+                {
+                    string logDeleteQuery = string.Format("DELETE FROM sponsortable WHERE `logid`='{0}';", entry);
+                    AAAPDatabase.SendQuery(logDeleteQuery);
+                }
+            }
+            else
+            {
+                Console.WriteLine("-No logs needed to be deleted");
+            }
+
             Console.WriteLine("Server Clean Successful - " + DateTime.Now);
         }
     }
@@ -139,9 +158,10 @@ namespace ServerLoop
                     {
                         for (int i = 0; i < dataReader.FieldCount; i++)
                         {
-                            returnList.Add(dataReader.GetName(i) + " : " + dataReader.GetValue(i) + "\n");
+                            string name = dataReader.GetName(i);
+                            string sValue = dataReader.GetValue(i).ToString();
+                            returnList.Add(sValue);
                         }
-                        returnList.Add("\n");
                     }
                 }
                 else

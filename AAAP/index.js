@@ -24,6 +24,8 @@ handlerList[config.memberNew] = memberHandlers.memberNew;
 handlerList[config.memberGetInfo] = memberHandlers.memberGetInfo;
 handlerList[config.memberRemove] = memberHandlers.memberRemove;
 handlerList[config.memberEdit] = memberHandlers.memberEdit;
+handlerList[config.memberPostLog] = memberHandlers.memberPostLog;
+handlerList[config.memberGetLog] = memberHandlers.memberGetLog;
 
 handlerList[config.commentNew] = commentHandlers.commentNew;
 handlerList[config.commentRemove] = commentHandlers.commentRemove;
