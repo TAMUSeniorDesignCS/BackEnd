@@ -26,8 +26,7 @@ var SQLConnectionPool = mysql.createPool({
 
 var ServerOptions = {
 	key: fs.readFileSync('./private-key.pem'),
-	cert: fs.readFileSync('./4ef46a36fe9473.crt'),
-	requestCert: true
+	cert: fs.readFileSync('./4ef46a36fe9473.crt')
 };
 
 function start(route, requestHandlers)
