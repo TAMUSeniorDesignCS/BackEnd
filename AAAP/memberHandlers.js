@@ -198,34 +198,42 @@ function memberEdit(postData, response)
 	{
 		if (connectionerr == null)
 		{
-			postData[passwordRow] = crypto.createHash('sha256').update(postData[passwordRow]).digest('base64');
-			var queryElements = [ postData[oldusernameRow], postData[firstNameRow], postData[userNameRow],
-			 					  postData[sponsoridRow], postData[passwordRow], postData["connection"],
-			 					  postData[emailRow], postData[phonenumberRow], postData[displayphonenumberRow]];
-			var sqlQuery = "UPDATE `members` SET `firstname`='{1}', `username`='{2}', `sponsorid`='{3}', `password`='{4}', `lastconnection`='{5}', `email`='{6}', `phonenumber`='{7}', `displayphonenumber`='{8}' WHERE `username`='{0}' LIMIT 1;";
-			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
-
-			connection.query(sqlQuery, function(err, rows)
+			if (typeof(postData[passwordRow]) == "undefined")
 			{
-				response.writeHead(200, { "Content-Type": "application/json"})
-				if(err == null)
-				{
-					updatedObject = [
-					{'firstname' : postData[firstNameRow],
-					 'username' : postData[userNameRow],
-					 'sponsorid' : postData[sponsoridRow],
-					 'email' : postData[emailRow],
-					 'phonenumber' : postData[phonenumberRow],
-					 'displayphonenumber' : postData[displayphonenumberRow] }
-					, valid];
-					response.write(JSON.stringify(updatedObject));
-				}
-				else
-				{
-					response.write(JSON.stringify([invalid]));
-				}
+				response.write(JSON.stringify(invalid));
 				response.end();
-			});
+			}
+			else
+			{
+				postData[passwordRow] = crypto.createHash('sha256').update(postData[passwordRow]).digest('base64');
+				var queryElements = [ postData[oldusernameRow], postData[firstNameRow], postData[userNameRow],
+				 					  postData[sponsoridRow], postData[passwordRow], postData["connection"],
+				 					  postData[emailRow], postData[phonenumberRow], postData[displayphonenumberRow]];
+				var sqlQuery = "UPDATE `members` SET `firstname`='{1}', `username`='{2}', `sponsorid`='{3}', `password`='{4}', `lastconnection`='{5}', `email`='{6}', `phonenumber`='{7}', `displayphonenumber`='{8}' WHERE `username`='{0}' LIMIT 1;";
+				sqlQuery = utility.stringFormat(sqlQuery, queryElements);
+
+				connection.query(sqlQuery, function(err, rows)
+				{
+					response.writeHead(200, { "Content-Type": "application/json"})
+					if(err == null)
+					{
+						updatedObject = [
+						{'firstname' : postData[firstNameRow],
+						 'username' : postData[userNameRow],
+						 'sponsorid' : postData[sponsoridRow],
+						 'email' : postData[emailRow],
+						 'phonenumber' : postData[phonenumberRow],
+						 'displayphonenumber' : postData[displayphonenumberRow] }
+						, valid];
+						response.write(JSON.stringify(updatedObject));
+					}
+					else
+					{
+						response.write(JSON.stringify([invalid]));
+					}
+					response.end();
+				});
+			}
 			connection.release();
 		}
 		else
