@@ -114,9 +114,9 @@ function start(route, requestHandlers)
 
 	if (SQLConnectionSuccessful)
 	{
-		http.createServer(onRequest).listen(config.RequestPort);
+		//http.createServer(onRequest).listen(config.RequestPort);
 		https.createServer(ServerOptions,onRequest).listen(443);
-		console.log("Server listening on port " + config.RequestPort +".");
+		console.log("Server listening.");
 	}
 }
 

@@ -4,12 +4,13 @@ var server = require('./server.js');
 var utility = require('./utilityFunctions.js');
 var mailer = require("nodemailer");
 var validRequest = false;
+var invalid =  {"valid" : false};
 
 function invalidRequest(postData, response)
 {
 	console.log("invalid request handler called");
-	response.writeHead(404, { "Content-Type": "text/plain; charset=UTF-8"})
-  	response.write("Your request is invalid.");
+	response.writeHead(200, {"Content-Type": "application/json"})
+  	response.write(JSON.stringify([invalid]));
   	response.end();
 }
 

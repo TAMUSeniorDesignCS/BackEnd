@@ -26,14 +26,17 @@ function memberAuth(postData, response)
 	{
 		if (connectionerr == null)
 		{
-			postData[passwordRow] = crypto.createHash('sha256').update(postData[passwordRow]).digest('base64');
+			if (typeof(postData[passwordRow] != "undefined"))
+			{
+				postData[passwordRow] = crypto.createHash('sha256').update(postData[passwordRow]).digest('base64');
+			}
 			var queryElements = [ postData[userNameRow], postData[passwordRow] ];
 			var sqlQuery = "SELECT members.groupid,members.firstname,members.username,members.sponsorid,members.email,members.phonenumber,members.displayphonenumber FROM `members` WHERE `username`='{0}' AND `password`='{1}' LIMIT 1;";
 			sqlQuery = utility.stringFormat(sqlQuery, queryElements);
 			connection.query(sqlQuery, function(err, rows)
 			{	
 				response.writeHead(200, { "Content-Type": "application/json"});
-				if(err == null && rows.length > 0)
+				if(err == null && rows.length > 0 && typeof(postData[passwordRow]) != "undefined")
 				{
 					rows.push(valid);
 					response.write(JSON.stringify(rows));
