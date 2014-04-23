@@ -128,7 +128,8 @@ function postNew(postData, response)
 			{
 				timeout = "0000-00-00 00:00:00";
 			}
-
+			var message = postData[messageRow];
+			postData[messageRow] = postData[messageRow].split("'").join("''");
 			var queryElements = [ postData[usernameRow], postData[messageRow],
 								  time, timeout ];
 			var sqlQuery = "INSERT INTO `posts` (`username`, `message`, `dateposted`, `timeout`) VALUES ('{0}', '{1}', '{2}' ,'{3}');";
@@ -142,7 +143,7 @@ function postNew(postData, response)
 				{
 					var newObject = [ {
 					 'username' : postData[usernameRow] ,
-					 'message' : postData[messageRow],
+					 'message' : message,
 					 'postid' : rows.insertId,
 					 'dateposted' : time,
 					 'timeout' : timeout },
@@ -195,7 +196,8 @@ function postEdit(postData, response)
 			{
 				timeoutString = timeoutString + "'" + timeout + "'";
 			}
-
+			var message = postData[messageRow];
+			postData[messageRow] = postData[messageRow].split("'").join("''");
 			var queryElements = [ postData[postidRow], postData[messageRow],
 								  time, timeoutString ];
 			var sqlQuery = "UPDATE `posts` SET `message`='{1}', `dateposted`='{2}' {3} WHERE `postid`='{0}';";
@@ -207,7 +209,7 @@ function postEdit(postData, response)
 				if(err == null)
 				{
 					var updatedObject = [ {
-					 'message' : postData[messageRow],
+					 'message' : message,
 					 'postid' : rows.insertId,
 					 'dateposted' : time,
 					 'timeout' : timeout },

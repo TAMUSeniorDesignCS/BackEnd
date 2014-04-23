@@ -28,7 +28,8 @@ function directMessageNew(postData, response)
 			{
 				timeout = "0000-00-00 00:00:00";
 			}
-
+			var message = postData[messageRow];
+			postData[messageRow] = postData[messageRow].split("'").join("''");
 			var queryElements = [ time, postData[messageRow],
 								  timeout, postData[usernameRow],
 								  postData[receiversUserNameRow] ];
@@ -42,7 +43,7 @@ function directMessageNew(postData, response)
 					var newObject = [ {
 					 'username' : postData[usernameRow] ,
 					 'receiverusername' : postData[receiversUserNameRow],
-					 'message' : postData[messageRow],
+					 'message' : message,
 					 'directmessageid' : rows.insertId,
 					 'dateposted' : time,
 					 'timeout' : timeout },
@@ -156,7 +157,7 @@ function directMessageEdit(postData, response)
 			var time = moment().add('hour',6).format(utility.dateFormat);
 			var timeout = moment().add('hour',6).add('hours',postData[timeoutRow]).format(utility.dateFormat);
 			var timeoutString = ", `timeout`="
-
+			postData[messageRow] = postData[messageRow].split("'").join("''");
 			if (timeoutRow == "-1")
 			{
 				timeout = "unchanged";
@@ -171,7 +172,7 @@ function directMessageEdit(postData, response)
 			{
 				timeoutString = timeoutString + "'" + timeout + "'";
 			}
-
+			var message = postData[messageRow];
 			var queryElements = [ postData[directMessageidRow], time,
 								  postData[messageRow], timeoutString ];
 			var sqlQuery = "SET SQL_SAFE_UPDATES=0; UPDATE `directmessages` SET `dateposted`='{1}', `message`='{2}' {3} WHERE `directmessageid`='{0}';";
@@ -183,7 +184,7 @@ function directMessageEdit(postData, response)
 				if(err == null)
 				{
 					var editedObject = [ {
-					 'message' : postData[messageRow],
+					 'message' : message,
 					 'directMessageid' : postData[directMessageidRow],
 					 'dateposted' : time,
 					 'timeout' : timeout },
